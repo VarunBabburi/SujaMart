@@ -1,20 +1,41 @@
 const express = require("express");
 const router = express.Router();
+const { body } = require("express-validator");
+
+const validate =
+require("../middleware/validate");
 const verifyToken = require("../middleware/authMiddleware");
+const upload = require(
+  "../middleware/uploadMiddleware"
+);
+
 const isAdmin = require("../middleware/adminMiddleware");
+
 
 const {
   addProduct,
   getProducts,
+  getActiveProducts,
   getProductById,
-   updateProduct,
-  deleteProduct
-} = require("../controllers/productController");
+  updateProduct,
+  deleteProduct,
+  toggleProductStatus
+} = require(
+  "../controllers/productController"
+);
 
 router.post(
   "/",
   verifyToken,
   isAdmin,
+  body("price")
+.isFloat({
+min:1
+})
+.withMessage(
+"Invalid price"
+), validate,
+    upload.single("image"),
   addProduct
 );
 
@@ -22,7 +43,21 @@ router.put(
   "/:id",
   verifyToken,
   isAdmin,
+  body("price")
+    .optional()
+    .isFloat({ min: 1 })
+    .withMessage("Invalid price"),
+
+  validate,
+  upload.single("image"),
   updateProduct
+);
+
+router.put(
+  "/status/:id",
+  verifyToken,
+  isAdmin,
+  toggleProductStatus
 );
 
 router.delete(
@@ -31,6 +66,12 @@ router.delete(
   isAdmin,
   deleteProduct
 );
+
+router.get(
+  "/active/all",
+  getActiveProducts
+);
+
 router.get("/", getProducts);
 router.get("/:id", getProductById);
 

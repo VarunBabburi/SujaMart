@@ -169,7 +169,7 @@ exports.recordPayment = (req, res) => {
 exports.getLedger = (req, res) => {
   const userId = req.user.id;
 
-  const sql = `
+  const ledgerSql = `
     SELECT
       ct.id,
       ct.type,
@@ -183,14 +183,43 @@ exports.getLedger = (req, res) => {
     ORDER BY ct.transaction_date DESC
   `;
 
-  db.query(sql, [userId], (err, results) => {
+  db.query(
+    ledgerSql,
+    [userId],
+    (err, results) => {
 
-    if (err) {
-      return res.status(500).json({
-        message: err.message
-      });
+      if (err) {
+        return res.status(500).json({
+          message: err.message,
+        });
+      }
+
+      db.query(
+        `
+        SELECT outstanding_balance
+        FROM credit_accounts
+        WHERE user_id = ?
+        `,
+        [userId],
+        (err2, balanceResult) => {
+
+          if (err2) {
+            return res.status(500).json({
+              message: err2.message,
+            });
+          }
+
+          res.json({
+            transactions: results,
+            outstanding:
+              balanceResult.length > 0
+                ? balanceResult[0].outstanding_balance
+                : 0,
+          });
+
+        }
+      );
+
     }
-
-    res.json(results);
-  });
+  );
 };

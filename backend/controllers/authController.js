@@ -1,7 +1,7 @@
 const db = require("../config/db");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const logger = require("../utils/logger");
 
 exports.registerUser = async (req, res) => {
   try {
@@ -15,20 +15,57 @@ exports.registerUser = async (req, res) => {
     `;
 
     db.query(
-      sql,
-      [name, email, phone, hashedPassword, address],
-      (err, result) => {
-        if (err) {
+  sql,
+  [name, email, phone, hashedPassword, address],
+  (err, result) => {
+
+    if (err) {
+      return res.status(500).json({
+        message: err.message,
+      });
+    }
+
+    const userId =
+      result.insertId;
+
+    db.query(
+      `
+      INSERT INTO credit_accounts
+      (
+        user_id,
+        credit_limit,
+        outstanding_balance
+      )
+      VALUES(?,?,?)
+      `,
+      [
+        userId,
+        5000,
+        0
+      ],
+      (creditErr) => {
+
+        if (creditErr) {
           return res.status(500).json({
-            message: err.message,
+            message:
+              creditErr.message,
           });
         }
 
+        logger.info({
+  action: "USER_REGISTER",
+  email,
+});
+
         res.status(201).json({
-          message: "User Registered Successfully",
+          message:
+            "User Registered Successfully",
         });
+
       }
     );
+  }
+);
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -78,6 +115,12 @@ exports.loginUser = async (req, res) => {
     expiresIn: "1d",
   }
 );
+
+logger.info({
+  action: "USER_LOGIN",
+  userId: user.id,
+  email: user.email,
+});
 
       res.json({
         message: "Login Successful",

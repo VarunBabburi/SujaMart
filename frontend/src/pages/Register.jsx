@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
+import { toast } from "react-toastify";
 
 function Register() {
   const navigate = useNavigate();
@@ -13,16 +14,20 @@ function Register() {
     address: "",
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]:
+        e.target.value,
     });
   };
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (
+    e
+  ) => {
     e.preventDefault();
 
     const {
@@ -40,7 +45,9 @@ function Register() {
       !password ||
       !address
     ) {
-      alert("Please fill all fields");
+      toast.info(
+        "Please fill all fields"
+      );
       return;
     }
 
@@ -52,12 +59,15 @@ function Register() {
         formData
       );
 
-      alert(res.data.message);
+      alert(
+        res.data.message
+      );
 
       navigate("/");
     } catch (err) {
-      alert(
-        err?.response?.data?.message ||
+      toast.error(
+        err?.response?.data
+          ?.message ||
           "Registration Failed"
       );
     } finally {
@@ -66,94 +76,122 @@ function Register() {
   };
 
   return (
-    <div
-      style={{
-        maxWidth: "500px",
-        margin: "30px auto",
-        padding: "20px",
-        border: "1px solid #ddd",
-        borderRadius: "10px",
-      }}
-    >
-      <h2>Register</h2>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-8">
 
-      <form onSubmit={handleRegister}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          value={formData.name}
-          onChange={handleChange}
-          style={inputStyle}
-        />
+      <div className="bg-white shadow-xl rounded-2xl w-full max-w-lg p-8">
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          style={inputStyle}
-        />
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-green-600">
+            SujaMart
+          </h1>
 
-        <input
-          type="text"
-          name="phone"
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={handleChange}
-          style={inputStyle}
-        />
+          <p className="text-gray-500 mt-2">
+            Create Your Account
+          </p>
+        </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          style={inputStyle}
-        />
+        <h2 className="text-2xl font-semibold text-center mb-6">
+          Register
+        </h2>
 
-        <textarea
-          name="address"
-          placeholder="Address"
-          value={formData.address}
-          onChange={handleChange}
-          style={{
-            ...inputStyle,
-            height: "80px",
-          }}
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={buttonStyle}
+        <form
+          onSubmit={
+            handleRegister
+          }
+          className="space-y-4"
         >
-          {loading
-            ? "Registering..."
-            : "Register"}
-        </button>
-      </form>
 
-      <p style={{ marginTop: "15px" }}>
-        Already have an account?{" "}
-        <Link to="/">Login</Link>
-      </p>
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            value={
+              formData.name
+            }
+            onChange={
+              handleChange
+            }
+            className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={
+              formData.email
+            }
+            onChange={
+              handleChange
+            }
+            className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+
+          <input
+            type="text"
+            name="phone"
+            placeholder="Phone Number"
+            value={
+              formData.phone
+            }
+            onChange={
+              handleChange
+            }
+            className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={
+              formData.password
+            }
+            onChange={
+              handleChange
+            }
+            className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+
+          <textarea
+            name="address"
+            placeholder="Address"
+            value={
+              formData.address
+            }
+            onChange={
+              handleChange
+            }
+            rows="4"
+            className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition"
+          >
+            {loading
+              ? "Registering..."
+              : "Register"}
+          </button>
+
+        </form>
+
+        <p className="text-center text-gray-600 mt-6">
+          Already have an account?
+          <Link
+            to="/"
+            className="text-green-600 font-semibold ml-2"
+          >
+            Login
+          </Link>
+        </p>
+
+      </div>
+
     </div>
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  padding: "10px",
-  marginBottom: "10px",
-};
-
-const buttonStyle = {
-  width: "100%",
-  padding: "10px",
-  cursor: "pointer",
-};
 
 export default Register;
