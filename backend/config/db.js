@@ -10,8 +10,12 @@ const pool = mysql.createPool({
   port: process.env.DB_PORT,
 
   ssl: {
-    ca: fs.readFileSync("./certificate/ca.pem"),
-  },
+  ca: fs.readFileSync(
+    process.env.NODE_ENV === "production"
+      ? "/etc/secrets/ca.pem"
+      : path.join(__dirname, "../certificate/ca.pem")
+  ),
+},
 
     dateStrings: true,
   timezone: "Z",
