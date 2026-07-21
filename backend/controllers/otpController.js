@@ -65,7 +65,7 @@ message:err.message
 
 if(
 result.length > 0 &&
-result[0].attempts >= 2
+result[0].attempts >= 3
 ){
 
 
@@ -291,7 +291,8 @@ otp
 }
 =req.body;
 
-
+console.log("Verify OTP API called");
+console.log(req.body);
 
 db.query(
 `
@@ -329,13 +330,21 @@ message:
 
 }
 
+
 db.query(
 `
 DELETE FROM otp_verifications
 WHERE phone=?
 `,
-[phone]
-);
+[phone],
+(err)=>{
+   if(err){
+      console.log(err);
+   }
+
+   // Continue checking user here
+});
+
 
 
 
@@ -351,6 +360,12 @@ WHERE phone=?
 [phone],
 (err,user)=>{
 
+    if(err){
+    return res.status(500).json({
+        message:err.message
+    });
+}
+
 
 if(user.length>0){
 
@@ -361,8 +376,10 @@ jwt.sign(
 id:user[0].id,
 role:user[0].role
 },
-process.env.JWT_SECRET
-);
+process.env.JWT_SECRET,
+{
+expiresIn:"7d"
+}); 
 
 
 return res.json({
