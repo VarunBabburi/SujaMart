@@ -1,4 +1,8 @@
 const db = require("../config/db");
+const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://sujamart.onrender.com"
+    : "http://localhost:5000";
 
 exports.addProduct = (req, res) => {
 const {
@@ -12,7 +16,7 @@ const {
 
 const image_url =
   req.file
-    ? `http://localhost:5000/uploads/${req.file.filename}`
+    ? `${BASE_URL}/uploads/${req.file.filename}`
     : null;
 
   const sql = `
@@ -150,7 +154,7 @@ const stock_quantity =
         results[0];
 
       const image_url = req.file
-        ? `http://localhost:5000/uploads/${req.file.filename}`
+        ? `${BASE_URL}/uploads/${req.file.filename}`
         : oldProduct.image_url;
 
       const sql = `
