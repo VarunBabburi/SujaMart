@@ -9,8 +9,7 @@ frontend/.env
 # SSL Certificates
 backend/certificate/
 
-# Uploads
-backend/uploads/
+
 
 
 # Logs
