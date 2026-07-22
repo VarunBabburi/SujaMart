@@ -281,191 +281,72 @@ message:
 
 
 
-exports.verifyOtp =
-(req,res)=>{
-
-
-const {
-phone,
-otp
-}
-=req.body;
-
-console.log("Verify OTP API called");
-console.log(req.body);
-
-db.query(
-`
-SELECT *
-FROM otp_verifications
-WHERE phone=?
-AND otp=?
-AND expires_at > NOW()
-`,
-[
-phone,
-otp
-],
-(err,result)=>{
-
-
-if(err){
-
-return res.status(500)
-.json(err);
-
-}
-
-
-
-if(result.length===0){
-
-return res.status(400)
-.json({
-
-message:
-"Invalid OTP"
-
-});
-
-}
-
-
-db.query(
-`
-DELETE FROM otp_verifications
-WHERE phone=?
-`,
-[phone],
-(err)=>{
-   if(err){
-      console.log(err);
-   }
-
-   // Continue checking user here
-});
-
-
-
-
-// check user
-
-
-db.query(
-`
-SELECT *
-FROM users
-WHERE phone=?
-`,
-[phone],
-(err,user)=>{
-
-    if(err){
-    return res.status(500).json({
-        message:err.message
-    });
-}
-
-
-if(user.length>0){
-
-
-const token =
-jwt.sign(
-{
-id:user[0].id,
-role:user[0].role
-},
-process.env.JWT_SECRET,
-{
-expiresIn:"7d"
-}); 
-
-
-return res.json({
-
-token,
-user:user[0]
-
-});
-
-
-}
-
-
-
-// create user
-
-
-db.query(
-`
-INSERT INTO users
-(
-name,
-phone,
-password,
-role
-)
-VALUES(?,?,?,?)
-`,
-[
-"Customer",
-phone,
-"OTP_LOGIN",
-"customer"
-],
-(err,newUser)=>{
-
-
-
-if(err){
-
-return res.status(500)
-.json(err);
-
-}
-
-
-
-const token =
-jwt.sign(
-{
-id:newUser.insertId,
-role:"customer"
-},
-process.env.JWT_SECRET
-);
-
-
-
-res.json({
-
-token,
-
-user:{
-
-id:newUser.insertId,
-name:"Customer",
-phone,
-role:"customer"
-
-}
-
-});
-
-
-}
-
-);
-
-
-
-});
-
-
-}
-
-);
-
-
+// ❌ OLD:
+// WHERE phone=? AND otp=? AND expires_at > NOW()
+
+// ✅ NEW: Compare timestamps using JavaScript or explicit SQL parameters
+exports.verifyOtp = (req, res) => {
+  const { phone, otp } = req.body;
+
+  db.query(
+    `SELECT * FROM otp_verifications WHERE phone=? AND otp=?`,
+    [phone, otp],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: err.message });
+
+      if (result.length === 0) {
+        return res.status(400).json({ message: "Invalid OTP" });
+      }
+
+      const record = result[0];
+      const now = new Date();
+      const expiresAt = new Date(record.expires_at);
+
+      // Explicitly compare dates in JS to avoid SQL server timezone mismatch
+      if (now > expiresAt) {
+        return res.status(400).json({ message: "OTP has expired. Request a new one." });
+      }
+
+      // Cleanup expired/used OTP
+      db.query(`DELETE FROM otp_verifications WHERE phone=?`, [phone]);
+
+      // Proceed to check/create user...
+      db.query(`SELECT * FROM users WHERE phone=?`, [phone], (err, user) => {
+        if (err) return res.status(500).json({ message: err.message });
+
+        if (user.length > 0) {
+          const token = jwt.sign(
+            { id: user[0].id, role: user[0].role },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+          );
+          return res.json({ token, user: user[0] });
+        }
+
+        db.query(
+          `INSERT INTO users (name, phone, password, role) VALUES (?, ?, ?, ?)`,
+          ["Customer", phone, "OTP_LOGIN", "customer"],
+          (err, newUser) => {
+            if (err) return res.status(500).json(err);
+
+            const token = jwt.sign(
+              { id: newUser.insertId, role: "customer" },
+              process.env.JWT_SECRET,
+              { expiresIn: "7d" }
+            );
+
+            return res.json({
+              token,
+              user: {
+                id: newUser.insertId,
+                name: "Customer",
+                phone,
+                role: "customer"
+              }
+            });
+          }
+        );
+      });
+    }
+  );
 };
