@@ -76,17 +76,39 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-8">
+    <div 
+      className="relative min-h-screen w-full flex items-center justify-center px-4 overflow-hidden bg-cover bg-center"
+      style={{ 
+        backgroundImage: "url('https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop')" 
+      }}
+    >
+      {/* Heavy modern blur overlay looking into the app */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/70 via-emerald-950/25 to-slate-900/60 backdrop-blur-[px]"></div>
+    {/* 2. Glassmorphic Premium Login Card */}
+      <div className="relative z-10 bg-white/95 backdrop-blur-md shadow-2xl rounded-3xl w-full max-w-md p-8 border border-white/40 transform transition-all">
 
-      <div className="bg-white shadow-xl rounded-2xl w-full max-w-lg p-8">
+      
 
-        <div className="text-center mb-8">
+        {/* <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-green-600">
             SujaMart
           </h1>
 
           <p className="text-gray-500 mt-2">
             Create Your Account
+          </p>
+        </div> */}
+        <div className="text-center mb-6 ">
+          <span className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm animate-bounce">
+            ⚡ Delivery in 10 Mins
+          </span>
+          
+          <h1 className="text-5xl font-black text-emerald-600 mt-4 tracking-tight drop-shadow-sm">
+            Suja<span className="text-amber-500">Mart</span>
+          </h1>
+
+          <p className="text-slate-500 mt-2 text-sm font-medium tracking-wide">
+            Your favorite groceries, delivered instantly.
           </p>
         </div>
 
@@ -188,8 +210,9 @@ function Register() {
           </Link>
         </p>
 
-      </div>
+      
 
+    </div>
     </div>
   );
 }

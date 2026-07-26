@@ -93,6 +93,21 @@ function Login() {
           onSubmit={handleLogin}
           className="space-y-4"
         >
+
+          <button
+            type="button"
+            onClick={() => navigate("/phone-login")}
+            className="w-full border-2 border-slate-200 hover:bg-slate-50 active:scale-[0.99] p-3.5 rounded-xl font-bold text-slate-700 transition flex items-center justify-center gap-2"
+          >
+            <span>📱</span> Continue with Phone
+          </button>
+
+          <div className="relative flex py-2 items-center text-slate-400 font-bold text-xs tracking-widest">
+            <div className="flex-grow border-t border-slate-200"></div>
+            <span className="flex-shrink mx-4">OR</span>
+            <div className="flex-grow border-t border-slate-200"></div>
+          </div>
+
           <div className="space-y-1">
             <label className="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Email Address</label>
             <input
@@ -135,20 +150,20 @@ function Login() {
           </button>
 
           {/* Divider style upgraded */}
-          <div className="relative flex py-2 items-center text-slate-400 font-bold text-xs tracking-widest">
+          {/* <div className="relative flex py-2 items-center text-slate-400 font-bold text-xs tracking-widest">
             <div className="flex-grow border-t border-slate-200"></div>
             <span className="flex-shrink mx-4">OR</span>
             <div className="flex-grow border-t border-slate-200"></div>
-          </div>
+          </div> */}
 
           {/* Phone login button modernized */}
-          <button
+          {/* <button
             type="button"
             onClick={() => navigate("/phone-login")}
             className="w-full border-2 border-slate-200 hover:bg-slate-50 active:scale-[0.99] p-3.5 rounded-xl font-bold text-slate-700 transition flex items-center justify-center gap-2"
           >
             <span>📱</span> Continue with Phone
-          </button>
+          </button> */}
         </form>
 
         <p className="text-center text-slate-500 font-medium mt-8 text-sm">

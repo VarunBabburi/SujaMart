@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import bgImage from "../assets/bg-preview.png";
 
 function PhoneLogin() {
   const navigate = useNavigate();
@@ -121,12 +122,34 @@ function PhoneLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md border border-gray-100">
-        <h1 className="text-3xl font-extrabold text-green-600 text-center">SujaMart</h1>
+    <div 
+      className="relative min-h-screen w-full flex items-center justify-center px-4 overflow-hidden bg-cover bg-center"
+      style={{ 
+        backgroundImage: `url(${bgImage})` 
+      }}
+    >
+      {/* Heavy modern blur overlay looking into the app */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/70 via-emerald-950/25 to-slate-900/60 backdrop-blur-[px]"></div>
+    
+      <div className="relative z-10 bg-white/80 backdrop-blur-md shadow-2xl rounded-3xl w-full max-w-md p-8 border border-white/40 transform transition-all">
+        {/* <h1 className="text-3xl font-extrabold text-green-600 text-center">SujaMart</h1>
         <p className="text-center text-gray-500 mt-1 mb-6 text-sm">
           Shop fresh grocery with 1-click mobile login
-        </p>
+        </p> */}
+
+        <div className="text-center mb-6 ">
+          <span className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm animate-bounce">
+            ⚡ Delivery in 10 Mins
+          </span>
+          
+          <h1 className="text-5xl font-black text-emerald-600 mt-4 tracking-tight drop-shadow-sm">
+            Suja<span className="text-amber-500">Mart</span>
+          </h1>
+
+          <p className="text-slate-500 mt-2 text-sm font-medium tracking-wide">
+            Your favorite groceries, delivered instantly.
+          </p>
+        </div>
 
         {/* Mobile Input */}
         <div className="space-y-1">
@@ -203,6 +226,7 @@ function PhoneLogin() {
           </div>
         )}
       </div>
+    
     </div>
   );
 }
