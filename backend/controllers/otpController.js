@@ -110,7 +110,7 @@ exports.verifyOtp = (req, res) => {
               const token = jwt.sign(
                 { id: newUser.insertId, role: "customer" },
                 process.env.JWT_SECRET,
-                { expiresIn: "7d" }
+                { expiresIn: "90d" }
               );
 
               return res.json({

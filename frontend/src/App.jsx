@@ -11,6 +11,7 @@ import AdminOrders from "./pages/admin/Orders";
 import CreditAccounts from "./pages/admin/CreditAccounts";
 import AdminProducts from "./pages/admin/Products";
 import AdminRoute from "./components/AdminRoute";
+import AuthRoute from "./components/AuthRoute";
 import PrivateRoute from "./components/PrivateRoute";
 import Categories from "./pages/admin/Categories";
 import OrderDetails from "./pages/OrderDetails";
@@ -29,13 +30,19 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Login/>} />
+        <Route path="/" element={
+            <AuthRoute>
+              <Login />
+            </AuthRoute>
+          } />
 
         
 
         <Route
           path="/register"
-          element={<Register />}
+          element={<AuthRoute>
+              <Register />
+            </AuthRoute>}
         />
 
         <Route
@@ -157,12 +164,16 @@ function App() {
 
         <Route
           path="/admin/payments"
-          element={<Payments />}
+          element={<AdminRoute>
+              <Payments />
+            </AdminRoute>}
         />
 
         <Route
           path="/addresses"
-          element={<Addresses />}
+          element={<PrivateRoute>
+              <Addresses />
+            </PrivateRoute>}
         />
 
         <Route
@@ -170,7 +181,9 @@ function App() {
 path="/phone-login"
 
 element={
-<PhoneLogin/>
+<AuthRoute>
+              <PhoneLogin />
+            </AuthRoute>
 }
 
 />
