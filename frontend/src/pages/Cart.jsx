@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState("");
   const [showAddressForm, setShowAddressForm] = useState(false);
@@ -167,6 +167,29 @@ function Cart() {
   );
 
   const addNewAddress = async () => {
+    if (!newAddress.name.trim()) {
+    toast.error("Name is required");
+    return;
+  }
+
+  // Flexible phone regex: accepts optional '+' country code, 7-15 digits, spaces, and hyphens
+ const cleanedPhone = newAddress.phone.replace(/[\s\-\+]/g, "").replace(/^0|^91/, "");
+
+  // Strictly enforce 10 digits
+  if (!/^\d{10}$/.test(cleanedPhone)) {
+    toast.error("Phone number must be exactly 10 digits");
+    return;
+  }
+
+  if (!newAddress.address_line.trim()) {
+    toast.error("Address is required");
+    return;
+  }
+
+  if (!newAddress.city.trim()) {
+    toast.error("City is required");
+    return;
+  }
     try {
       const token = localStorage.getItem("token");
       const res = await api.post("/address", newAddress, {
@@ -400,7 +423,7 @@ function Cart() {
                   />
                   {[
                     { placeholder: "City *", key: "city" },
-                    { placeholder: "Pincode *", key: "pincode" },
+                    { placeholder: "Pincode (optional)", key: "pincode" },
                     { placeholder: "Landmark (optional)", key: "landmark" },
                   ].map(({ placeholder, key }) => (
                     <input

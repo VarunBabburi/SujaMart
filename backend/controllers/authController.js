@@ -25,33 +25,7 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    const userId =
-      result.insertId;
-
-    db.query(
-      `
-      INSERT INTO credit_accounts
-      (
-        user_id,
-        credit_limit,
-        outstanding_balance
-      )
-      VALUES(?,?,?)
-      `,
-      [
-        userId,
-        5000,
-        0
-      ],
-      (creditErr) => {
-
-        if (creditErr) {
-          return res.status(500).json({
-            message:
-              creditErr.message,
-          });
-        }
-
+    
         logger.info({
   action: "USER_REGISTER",
   email,
@@ -65,8 +39,8 @@ exports.registerUser = async (req, res) => {
       }
     );
   }
-);
-  } catch (error) {
+
+  catch (error) {
     res.status(500).json({
       message: error.message,
     });

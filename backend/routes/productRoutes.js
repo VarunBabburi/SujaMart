@@ -28,14 +28,12 @@ router.post(
   "/",
   verifyToken,
   isAdmin,
+  upload.single("image"),
   body("price")
-.isFloat({
-min:1
-})
-.withMessage(
-"Invalid price"
-), validate,
-    upload.single("image"),
+    .notEmpty()
+    .isFloat({ min: 1 })
+    .withMessage("Invalid price"),
+  validate,
   addProduct
 );
 

@@ -5,6 +5,12 @@ const BASE_URL =
     : "http://localhost:5000";
 
 exports.addProduct = (req, res) => {
+
+     console.log("BODY:", req.body);
+  console.log("PRICE:", req.body.price);
+  console.log("TYPE:", typeof req.body.price);
+  console.log("FILE:", req.file);
+
 const {
   category_id,
   name,

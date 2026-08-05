@@ -107,13 +107,24 @@ exports.verifyOtp = (req, res) => {
             (err, newUser) => {
               if (err) return res.status(500).json({ message: err.message });
 
+              const newUserId = newUser.insertId;
+
+    // Create Credit Account for OTP registered user
+    db.query(
+      `INSERT INTO credit_accounts (user_id, credit_limit, outstanding_balance) VALUES (?, ?, ?)`,
+      [newUserId, 5000, 0],
+      (creditErr) => {
+        if (creditErr) {
+          return res.status(500).json({ message: creditErr.message });
+        }
+
               const token = jwt.sign(
                 { id: newUser.insertId, role: "customer" },
                 process.env.JWT_SECRET,
                 { expiresIn: "90d" }
               );
 
-              return res.json({
+return res.json({
                 token,
                 user: { id: newUser.insertId, name: "Customer", phone: cleanPhone, role: "customer" }
               });
@@ -121,6 +132,8 @@ exports.verifyOtp = (req, res) => {
           );
         }
       );
+    }
+  );
     }
   );
 };

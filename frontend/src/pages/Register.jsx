@@ -38,18 +38,10 @@ function Register() {
       address,
     } = formData;
 
-    if (
-      !name ||
-      !email ||
-      !phone ||
-      !password ||
-      !address
-    ) {
-      toast.info(
-        "Please fill all fields"
-      );
-      return;
-    }
+    if (!email || !password) {
+  toast.info("Email and Password are required");
+  return;
+}
 
     try {
       setLoading(true);
@@ -59,9 +51,7 @@ function Register() {
         formData
       );
 
-      alert(
-        res.data.message
-      );
+     toast.success(res.data.message);
 
       navigate("/");
     } catch (err) {
@@ -126,7 +116,7 @@ function Register() {
           <input
             type="text"
             name="name"
-            placeholder="Full Name"
+            placeholder="Full Name (Optional)"
             value={
               formData.name
             }
@@ -135,6 +125,10 @@ function Register() {
             }
             className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
+          <label className="block mb-1 font-medium">
+  Email <span className="text-red-500">*</span>
+</label>
+
 
           <input
             type="email"
@@ -149,18 +143,9 @@ function Register() {
             className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
 
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone Number"
-            value={
-              formData.phone
-            }
-            onChange={
-              handleChange
-            }
-            className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
+          <label className="block mb-1 font-medium">
+  Password <span className="text-red-500">*</span>
+</label>
 
           <input
             type="password"
@@ -175,9 +160,22 @@ function Register() {
             className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
 
+          <input
+            type="text"
+            name="phone"
+            placeholder="Phone Number (Optional)"
+            value={
+              formData.phone
+            }
+            onChange={
+              handleChange
+            }
+            className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+
           <textarea
             name="address"
-            placeholder="Address"
+            placeholder="Address (Optional)"
             value={
               formData.address
             }

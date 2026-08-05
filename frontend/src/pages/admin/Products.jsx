@@ -9,16 +9,17 @@ function AdminProducts() {
   const [editableProducts, setEditableProducts] =
     useState({});
 
-  const [formData, setFormData] =
-    useState({
-      name: "",
-      description: "",
-      category_id: "",
-      price: "",
-      stock_quantity: "",
-      unit: "",
-      image: null,
-    });
+  const initialFormState = {
+  name: "",
+  category_id: "",
+  description: "",
+  unit: "",
+  price: "",
+  stock_quantity: "",
+  image: null,
+};
+
+const [formData, setFormData] = useState(initialFormState);
 
   const [categories, setCategories] =
     useState([]);
@@ -73,29 +74,18 @@ function AdminProducts() {
       const data = new FormData();
 
       data.append("name", formData.name);
-      data.append(
-        "category_id",
-        formData.category_id
-      );
-      data.append(
-        "description",
-        formData.description
-      );
+      data.append("category_id", formData.category_id);
+      data.append("description",formData.description || "");
+      data.append("unit",formData.unit);
+      data.append("price", formData.price.toString());
+      data.append( "stock_quantity", formData.stock_quantity.toString());
 
-      data.append(
-        "unit",
-        formData.unit
-      );
-      data.append("price", formData.price);
-      data.append(
-        "stock_quantity",
-        formData.stock_quantity
-      );
-
+if (formData.image) {
       data.append(
         "image",
         formData.image
       );
+}
 
       await api.post(
         "/products",
@@ -103,15 +93,17 @@ function AdminProducts() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type":
-              "multipart/form-data",
+           
           },
         }
       );
 
       toast.success("Product Added Successfully");
 
-      fetchProducts();
+      setFormData(initialFormState);
+
+     await fetchProducts();
+
     } catch (error) {
       console.log(error);
       toast.error("Failed");
@@ -193,6 +185,13 @@ function AdminProducts() {
       );
 
       toast.success("Product updated Successfully");
+
+      // Clear edits for this item
+      setEditableProducts((prev) => {
+        const copy = { ...prev };
+        delete copy[product.id];
+        return copy;
+      });
 
       fetchProducts();
     } catch (error) {
@@ -290,7 +289,7 @@ function AdminProducts() {
     Swal.fire({
       icon: "error",
       title: "Delete Failed",
-      text: "Unable to delete product.",
+      text: "Unable to delete product Becasue it has Orders",
     });
   }
 };
@@ -447,6 +446,7 @@ product.unit
                 </label>
                 <input
                   type="file"
+                  key={formData.image ? formData.image.name : "empty"}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -491,7 +491,9 @@ product.unit
 
         {/* Products Grid Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
+          {filteredProducts.map((product) =>{
+            const currentEdits = editableProducts[product.id] || {};
+            return(
             <div
               key={product.id}
               className="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col justify-between group transition-all duration-200 hover:shadow-md hover:border-slate-300"
@@ -505,7 +507,16 @@ product.unit
                 }`}>
                   {product.is_active ? "Active" : "Hidden"}
                 </span>
+                {/* Delete Button */}
+                  <button
+                    onClick={() => deleteProduct(product.id)}
+                    className="absolute top-3 right-3 text-slate-400 hover:text-rose-600 transition-colors p-1"
+                    title="Delete product"
+                  >
+                    ✕
+                  </button>
                 
+
                 <img
                   src={
                     product.image_url ||
@@ -544,10 +555,10 @@ product.unit
                     <input
                       type="text"
                       placeholder="Edit Name"
+                      value={currentEdits.name ?? ""}
                       onChange={(e) =>
                         handleFieldChange(
                           product.id,
-                          "name",
                           "name",
                           e.target.value
                         )
@@ -558,6 +569,7 @@ product.unit
                     <input
                       type="number"
                       placeholder="Edit Price"
+                      value={currentEdits.price ?? ""}
                       onChange={(e) =>
                         handleFieldChange(
                           product.id,
@@ -573,6 +585,7 @@ product.unit
                     <textarea
                       placeholder="Edit Desc"
                       rows={1}
+                      value={currentEdits.description ?? ""}
                       onChange={(e) =>
                         handleFieldChange(
                           product.id,
@@ -584,6 +597,7 @@ product.unit
                     />
 
                     <select
+                    value={currentEdits.category_id ?? ""}
                       onChange={(e) =>
                         handleFieldChange(
                           product.id,
@@ -606,6 +620,7 @@ product.unit
                     <input
                       type="text"
                       placeholder="Edit Unit"
+                      value={currentEdits.unit ?? ""}
                       onChange={(e) =>
                         handleFieldChange(
                           product.id,
@@ -619,6 +634,7 @@ product.unit
                     <input
                       type="number"
                       placeholder="Edit Stock"
+                      value={currentEdits.stock_quantity ?? ""}
                       onChange={(e) =>
                         handleFieldChange(
                           product.id,
@@ -668,7 +684,8 @@ product.unit
               </div>
               
             </div>
-          ))}
+          );
+          })}
         </div>
       </div>
         

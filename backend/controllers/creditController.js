@@ -2,7 +2,6 @@ const db = require("../config/db");
 
 exports.addCreditPurchase = (req, res) => {
   const userId = req.user.id;
-
   const { amount, description } = req.body;
 
   const accountQuery = `
@@ -12,76 +11,64 @@ exports.addCreditPurchase = (req, res) => {
   `;
 
   db.query(accountQuery, [userId], (err, accounts) => {
-
     if (err) {
-      return res.status(500).json({
-        message: err.message
-      });
+      return res.status(500).json({ message: err.message });
     }
 
-    if (accounts.length === 0) {
-      return res.status(404).json({
-        message: "Credit Account Not Found"
-      });
-    }
+    // Function to handle balance update & ledger entry
+    const processPurchase = (account) => {
+      const newBalance = Number(account.outstanding_balance) + Number(amount);
 
-    const account = accounts[0];
+      if (newBalance > account.credit_limit) {
+        return res.status(400).json({ message: "Credit Limit Exceeded" });
+      }
 
-    const newBalance =
-      Number(account.outstanding_balance) +
-      Number(amount);
+      // Update Balance
+      db.query(
+        `UPDATE credit_accounts SET outstanding_balance = ? WHERE id = ?`,
+        [newBalance, account.id],
+        (err) => {
+          if (err) return res.status(500).json({ message: err.message });
 
-    if (newBalance > account.credit_limit) {
-      return res.status(400).json({
-        message: "Credit Limit Exceeded"
-      });
-    }
+          // Add Ledger Entry
+          db.query(
+            `INSERT INTO credit_transactions (credit_account_id, type, amount, description) VALUES (?, ?, ?, ?)`,
+            [account.id, "purchase", amount, description],
+            (err) => {
+              if (err) return res.status(500).json({ message: err.message });
 
-    // Update Balance
-    db.query(
-      `
-      UPDATE credit_accounts
-      SET outstanding_balance = ?
-      WHERE id = ?
-      `,
-      [newBalance, account.id],
-      (err) => {
-
-        if (err) {
-          return res.status(500).json({
-            message: err.message
-          });
-        }
-
-        // Add Ledger Entry
-        db.query(
-          `
-          INSERT INTO credit_transactions
-          (credit_account_id,type,amount,description)
-          VALUES(?,?,?,?)
-          `,
-          [
-            account.id,
-            "purchase",
-            amount,
-            description
-          ],
-          (err) => {
-
-            if (err) {
-              return res.status(500).json({
-                message: err.message
+              res.json({
+                message: "Credit Purchase Added",
+                outstandingBalance: newBalance
               });
             }
+          );
+        }
+      );
+    };
 
-            res.json({
-              message: "Credit Purchase Added",
-              outstandingBalance: newBalance
-            });
-          }
-        );
-      }
-    );
+    // If user orders on credit for the FIRST time, create credit_account row NOW
+    if (accounts.length === 0) {
+      const defaultLimit = 5000;
+      db.query(
+        `INSERT INTO credit_accounts (user_id, credit_limit, outstanding_balance) VALUES (?, ?, 0)`,
+        [userId, defaultLimit],
+        (err, insertResult) => {
+          if (err) return res.status(500).json({ message: err.message });
+
+          // Proceed with purchase using newly created account ID
+          processPurchase({
+            id: insertResult.insertId,
+            user_id: userId,
+            credit_limit: defaultLimit,
+            outstanding_balance: 0
+          });
+        }
+      );
+    } else {
+      // Account already exists
+      processPurchase(accounts[0]);
+    }
   });
 };
 exports.recordPayment = (req, res) => {

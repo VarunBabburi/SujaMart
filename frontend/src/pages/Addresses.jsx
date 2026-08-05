@@ -34,8 +34,26 @@ function Addresses() {
     }
   };
 
+  const validatePhone = (phoneNumber) => {
+    // Strip non-digits and leading country code prefix '0' or '91'
+    const cleaned = phoneNumber.replace(/[\s\-\+]/g, "").replace(/^0|^91/, "");
+    return /^\d{10}$/.test(cleaned);
+  };
+
   const addAddress = async (e) => {
     e.preventDefault();
+
+    // 1. Validate primary phone number
+    if (!validatePhone(form.phone)) {
+      toast.error("Please enter a valid 10-digit phone number");
+      return;
+    }
+
+    // 2. Validate alternate phone number (only if provided)
+    if (form.alternate_phone.trim() && !validatePhone(form.alternate_phone)) {
+      toast.error("Please enter a valid 10-digit alternate phone number");
+      return;
+    }
     try {
       const token = localStorage.getItem("token");
       await api.post("/address", form, {
@@ -115,6 +133,9 @@ function Addresses() {
                 required
               />
               <input
+
+              type="tel"
+                maxLength={15}
                 placeholder="Phone *"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -136,11 +157,11 @@ function Addresses() {
                 required
               />
               <input
-                placeholder="Pincode *"
+                placeholder="Pincode (optional)"
                 value={form.pincode}
                 onChange={(e) => setForm({ ...form, pincode: e.target.value })}
                 className="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                required
+              
               />
               <input
                 placeholder="Landmark (optional)"
@@ -149,6 +170,8 @@ function Addresses() {
                 className="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
               <input
+              type="tel"
+                maxLength={15}
                 placeholder="Alternate Phone (optional)"
                 value={form.alternate_phone}
                 onChange={(e) => setForm({ ...form, alternate_phone: e.target.value })}

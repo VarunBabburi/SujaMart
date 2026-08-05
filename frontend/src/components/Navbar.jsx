@@ -207,7 +207,7 @@ console.log(error);
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 flex flex-col w-full font-sans">
+    <header className="sticky top-0 z-50 flex flex-col w-full font-sans"> 
       {/* Primary Top Navbar */}
       <nav className="bg-[#F4F6FB]/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex justify-between items-center gap-4">
@@ -229,8 +229,12 @@ console.log(error);
             </Link>
 
             {/* Delivery Location Pill (Mobile & Desktop) */}
-            <div className="hidden sm:flex items-center gap-2 bg-white border border-slate-200/80 px-3 py-1.5 rounded-2xl shadow-xs ml-2">
-              <span className="text-amber-500 text-xs">⚡</span>
+<button
+              onClick={() => navigate("/addresses")}
+              className="hidden sm:flex items-center gap-2 bg-white hover:bg-purple-50/60 border border-slate-200/80 hover:border-purple-300 px-3 py-1.5 rounded-2xl shadow-xs ml-2 transition-all cursor-pointer group active:scale-95"
+              title="Change Delivery Address"
+            >
+                            <span className="text-amber-500 text-xs">⚡</span>
               <div className="flex flex-col text-left leading-tight">
                 <span className="text-[10px] font-black text-[#0f172a] uppercase tracking-wider">
                   6 MINS TO
@@ -239,24 +243,28 @@ console.log(error);
                   📍 Home - Hanamkonda
                 </span>
               </div>
-            </div>
+              </button>
           </div>
 
           {/* Mobile Specific Header Sub-Text */}
-          <div className="flex sm:hidden flex-col items-end text-right">
+          <button
+            onClick={() => navigate("/addresses")}
+            className="flex sm:hidden flex-col items-end text-right bg-white/60 hover:bg-purple-50/80 px-2.5 py-1 rounded-xl border border-slate-200/60 transition active:scale-95 cursor-pointer"
+            title="Change Delivery Address"
+          >
             <span className="text-[10px] font-black text-purple-600 uppercase tracking-wider flex items-center gap-1">
               <span className="text-amber-500">⚡</span> 6 MINS
             </span>
             <span className="text-[11px] font-bold text-slate-600 truncate max-w-[110px]">
               📍 Home
             </span>
-          </div>
+          </button>
 
           {/* Clean Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-1 bg-white/80 border border-slate-200/80 p-1 rounded-2xl shadow-xs">
             {[
               { path: "/products", label: "Products", icon: "🛒" },
-              { path: "/cart", label: "Cart", icon: "🛍️" },
+              { path: "/cart", label: "Cart", icon: "🛍️" }, 
               { path: "/orders", label: "Orders", icon: "📦" },
               { path: "/ledger", label: "Udhaar", icon: "📖" },
               { path: "/addresses", label: "Addresses", icon: "📍" },

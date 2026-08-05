@@ -31,8 +31,7 @@ if(
 !name ||
 !phone ||
 !address_line ||
-!city ||
-!pincode
+!city
 ){
 
 return res.status(400)
@@ -76,7 +75,7 @@ name,
 phone,
 address_line,
 city,
-pincode,
+pincode || null,
 landmark || null,
 alternate_phone || null,
 address_type || "home"
