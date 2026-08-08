@@ -6,7 +6,7 @@ const BASE_URL =
 
 exports.addProduct = (req, res) => {
 
-     console.log("BODY:", req.body);
+  console.log("BODY:", req.body);
   console.log("PRICE:", req.body.price);
   console.log("TYPE:", typeof req.body.price);
   console.log("FILE:", req.file);
@@ -20,10 +20,7 @@ const {
   unit
 } = req.body;
 
-const image_url =
-  req.file
-    ? `${BASE_URL}/uploads/${req.file.filename}`
-    : null;
+const image_url = req.file ? req.file.path : null;
 
   const sql = `
     INSERT INTO products
@@ -160,8 +157,8 @@ const stock_quantity =
         results[0];
 
       const image_url = req.file
-        ? `${BASE_URL}/uploads/${req.file.filename}`
-        : oldProduct.image_url;
+  ? req.file.path
+  : oldProduct.image_url;
 
       const sql = `
 UPDATE products
