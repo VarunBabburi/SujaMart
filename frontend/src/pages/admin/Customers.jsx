@@ -36,6 +36,7 @@ function Customers() {
   const keyword = search.toLowerCase();
 
   return (
+    customer.order_id?.toString().toLowerCase().includes(keyword)||
     customer.name?.toLowerCase().includes(keyword) ||
     customer.email?.toLowerCase().includes(keyword) ||
     customer.phone?.toLowerCase().includes(keyword)
@@ -45,15 +46,16 @@ function Customers() {
   return (
     <>
       <Navbar />
+ <div className="max-w-7xl mx-auto p-4 md:p-6">
 
-      <div className="bg-white rounded-xl shadow-sm border p-4 mb-6">
+      <div className="mb-6">
 
   <input
     type="text"
     placeholder="🔍 Search by Name, Email or Phone..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
-    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
   />
 
 </div>
@@ -63,15 +65,15 @@ function Customers() {
   </div>
 )}
 
-      <div className="max-w-7xl mx-auto p-6">
+      
 
-        <h1 className="text-3xl font-bold mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold mb-6">
           Customers
         </h1>
 
-        <div className="bg-white shadow rounded-xl overflow-hidden">
+        <div className="bg-white shadow rounded-xl overflow-x-auto">
 
-          <table className="w-full">
+          <table className="w-full min-w-[650px]">
 
             <thead className="bg-green-600 text-white">
 

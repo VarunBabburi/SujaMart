@@ -1,98 +1,70 @@
 import { Link, useNavigate } from "react-router-dom";
-import {useEffect,useState} 
-from "react";
+import { useEffect, useState } from "react";
 
-import socket
-from "../socket";
-
-import api
-from "../services/api";
-
-import {toast}
-from "react-toastify";
-
-import orderSound
-from "../assets/order.mp3";
+import socket from "../socket";
+import api from "../services/api";
+import { toast } from "react-toastify";
+import orderSound from "../assets/order.mp3";
 import { useLocation } from "react-router-dom";
 
-
-
 function Navbar() {
-
   const navigate = useNavigate();
   const location = useLocation();
 
-   const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
-const [notifications,setNotifications] =
-useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
 
+  // Scroll visibility state for mobile bottom navbar
+  const [showMobileNav, setShowMobileNav] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
-const [showNotifications,setShowNotifications] =
-useState(false);
+  // Scroll listener for hide/show on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
 
-useEffect(()=>{
+      // Show navbar if scrolling up or near the top; hide if scrolling down past 50px
+      if (currentScrollY < lastScrollY || currentScrollY < 50) {
+        setShowMobileNav(true);
+      } else {
+        setShowMobileNav(false);
+      }
 
+      setLastScrollY(currentScrollY);
+    };
 
-if(
-user?.role !== "admin"
-){
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
-return;
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
 
-}
+  useEffect(() => {
+    if (user?.role !== "admin") {
+      return;
+    }
 
+    fetchNotifications();
 
-fetchNotifications();
+    socket.on("new-order", (data) => {
+      const audio = new Audio(orderSound);
 
+      audio.play().catch((err) => console.log(err));
 
-socket.on(
-"new-order",
-(data)=>{
+      toast.success(`🔔 New Order #${data.orderId} ₹${data.amount}`, {
+        autoClose: 10000,
+      });
 
+      fetchNotifications();
+    });
 
-const audio =
-new Audio(orderSound);
-
-
-audio.play()
-.catch((err)=>
-console.log(err)
-);
-
-
-toast.success(
-
-`🔔 New Order #${data.orderId}
-₹${data.amount}`,
-
-{
-autoClose:10000
-}
-
-);
-
-
-fetchNotifications();
-
-
-}
-);
-
-
-
-return()=>{
-
-
-socket.off(
-"new-order"
-);
-
-
-};
-
-
-},[]);
+    return () => {
+      socket.off("new-order");
+    };
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -101,117 +73,50 @@ socket.off(
     navigate("/");
   };
 
- 
+  const fetchNotifications = async () => {
+    try {
+      const res = await api.get("/notifications");
+      setNotifications(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const fetchNotifications =
-async()=>{
+  const clearNotifications = async () => {
+    try {
+      await api.delete("/notifications/clear");
+      setNotifications([]);
+      setShowNotifications(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  const openNotification = async (notification) => {
+    try {
+      await api.delete(`/notifications/${notification.id}`);
+      setNotifications(
+        notifications.filter((n) => n.id !== notification.id)
+      );
+      setShowNotifications(false);
 
-try{
-
-const res =
-await api.get(
-"/notifications"
-);
-
-
-setNotifications(
-res.data
-);
-
-
-}
-catch(error){
-
-console.log(error);
-
-}
-
-
-};
-
-const clearNotifications =
-async()=>{
-
-
-try{
-
-
-await api.delete(
-"/notifications/clear"
-);
-
-
-setNotifications([]);
-
-
-setShowNotifications(false);
-
-
-}
-catch(error){
-
-
-console.log(error);
-
-
-}
-
-
-};
-
-
-const openNotification =
-async(notification)=>{
-
-
-try{
-
-
-await api.delete(
-`/notifications/${notification.id}`
-);
-
-
-setNotifications(
-notifications.filter(
-(n)=>
-n.id !== notification.id
-)
-);
-
-
-setShowNotifications(false);
-
-
-navigate(
-"/admin/orders",
-{
-state:{
-orderId:
-notification.order_id
-}
-}
-);
-
-
-}
-catch(error){
-
-console.log(error);
-
-}
-
-};
+      navigate("/admin/orders", {
+        state: {
+          orderId: notification.order_id,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 flex flex-col w-full font-sans"> 
+    <header className="sticky top-0 z-50 flex flex-col w-full font-sans">
       {/* Primary Top Navbar */}
       <nav className="bg-[#F4F6FB]/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex justify-between items-center gap-4">
-          
           {/* Brand Logo & Location (Blinkit / Zepto Style) */}
           <div className="flex items-center gap-3">
             <Link to="/products" className="flex items-center gap-2 group">
@@ -228,13 +133,13 @@ console.log(error);
               </div>
             </Link>
 
-            {/* Delivery Location Pill (Mobile & Desktop) */}
-<button
+            {/* Delivery Location Pill (Desktop) */}
+            <button
               onClick={() => navigate("/addresses")}
               className="hidden sm:flex items-center gap-2 bg-white hover:bg-purple-50/60 border border-slate-200/80 hover:border-purple-300 px-3 py-1.5 rounded-2xl shadow-xs ml-2 transition-all cursor-pointer group active:scale-95"
               title="Change Delivery Address"
             >
-                            <span className="text-amber-500 text-xs">⚡</span>
+              <span className="text-amber-500 text-xs">⚡</span>
               <div className="flex flex-col text-left leading-tight">
                 <span className="text-[10px] font-black text-[#0f172a] uppercase tracking-wider">
                   6 MINS TO
@@ -243,7 +148,7 @@ console.log(error);
                   📍 Home - Hanamkonda
                 </span>
               </div>
-              </button>
+            </button>
           </div>
 
           {/* Mobile Specific Header Sub-Text */}
@@ -264,7 +169,7 @@ console.log(error);
           <div className="hidden md:flex items-center gap-1 bg-white/80 border border-slate-200/80 p-1 rounded-2xl shadow-xs">
             {[
               { path: "/products", label: "Products", icon: "🛒" },
-              { path: "/cart", label: "Cart", icon: "🛍️" }, 
+              { path: "/cart", label: "Cart", icon: "🛍️" },
               { path: "/orders", label: "Orders", icon: "📦" },
               { path: "/ledger", label: "Udhaar", icon: "📖" },
               { path: "/addresses", label: "Addresses", icon: "📍" },
@@ -397,8 +302,12 @@ console.log(error);
         </div>
       )}
 
-      {/* Mobile Bottom Quick Navigation Bar (Zepto/Blinkit Style) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-50 py-2 px-3 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+      {/* Mobile Bottom Quick Navigation Bar (Smooth Hide on Scroll Down, Show on Scroll Up) */}
+      <div
+        className={`md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-50 py-2 px-3 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] transition-transform duration-300 ease-in-out ${
+          showMobileNav ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
         <div className="flex justify-around items-center">
           {[
             { path: "/products", label: "Shop", icon: "🛒" },
@@ -413,17 +322,23 @@ console.log(error);
                 key={item.path}
                 to={item.path}
                 className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all ${
-                  active ? "text-[#7A22FD]" : "text-slate-400 hover:text-slate-600"
+                  active
+                    ? "text-[#7A22FD]"
+                    : "text-slate-400 hover:text-slate-600"
                 }`}
               >
                 <span className="text-lg leading-none">{item.icon}</span>
-                <span className={`text-[10px] ${active ? "font-black" : "font-semibold"}`}>
+                <span
+                  className={`text-[10px] ${
+                    active ? "font-black" : "font-semibold"
+                  }`}
+                >
                   {item.label}
                 </span>
               </Link>
             );
           })}
-        </div>  
+        </div>
       </div>
     </header>
   );

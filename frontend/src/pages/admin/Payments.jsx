@@ -54,15 +54,15 @@ function Payments() {
       <div className="max-w-7xl mx-auto p-6">
 
 
-        <h1 className="text-3xl font-bold mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold mb-6">
           💳 Payment Transactions
         </h1>
 
 
-        <div className="bg-white rounded-xl shadow overflow-hidden">
+        <div className="bg-white rounded-xl shadow overflow-x-auto">
 
 
-          <table className="w-full">
+          <table className="w-full min-w-[650px]">
 
             <thead className="bg-green-600 text-white">
 

@@ -350,9 +350,17 @@ function Products() {
                       />
                       
                       {/* Top left 15% OFF badge style label */}
+                      {Number(product.price) >= 150 && (
                       <div className="absolute top-3 left-3 bg-[#a855f7] text-white font-black text-[9px] px-2 py-0.5 rounded-lg uppercase tracking-wider shadow-sm">
-                        15% OFF
+                        5% OFF
                       </div>
+                      )}
+
+                       {Number(product.price) >= 200 && (
+                      <div className="absolute top-3 left-3 bg-[#a855f7] text-white font-black text-[9px] px-2 py-0.5 rounded-lg uppercase tracking-wider shadow-sm">
+                        10% OFF
+                      </div>
+                      )}
 
                       {/* Top right custom limited quantity counter */}
                       {product.stock_quantity <= 5 && product.stock_quantity > 0 && (
