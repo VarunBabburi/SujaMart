@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import AuthBottomSheet from "../components/AuthBottomSheet";
 import NetworkError from "../components/NetworkError";
+import NamePromptModal from "../components/NamePromptModal";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -21,12 +22,61 @@ function Products() {
   const [sortBy, setSortBy] = useState("");
   const [showLogin,setShowLogin] =useState(false);
   const [networkError, setNetworkError] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
 
   useEffect(() => {
     fetchProducts();
     fetchCartSummary();
     fetchCart();
+    checkAndPromptName();
   }, []);
+
+  const checkAndPromptName = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const timer = setTimeout(() => {
+      let user = {};
+      try {
+        user = JSON.parse(localStorage.getItem("user")) || {};
+      } catch (e) {
+        user = {};
+      }
+
+      if (!user.name || user.name.trim() === "") {
+        setShowNameModal(true);
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  };
+
+  const handleSaveName = async (enteredName) => {
+    const token = localStorage.getItem("token");
+    try {
+      await api.put(
+        "/user/profile",
+        { name: enteredName },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      let user = {};
+      try {
+        user = JSON.parse(localStorage.getItem("user")) || {};
+      } catch (e) {
+        user = {};
+      }
+
+      const updatedUser = { ...user, name: enteredName };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      
+      setShowNameModal(false);
+      toast.success(`Welcome, ${enteredName}!`);
+    } catch (error) {
+      console.log("Failed to update name:", error);
+      toast.error("Could not save name");
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -505,6 +555,12 @@ function Products() {
         </div>
       )}
     </div>
+
+    <NamePromptModal
+        show={showNameModal}
+        onSubmit={handleSaveName}
+        onClose={() => setShowNameModal(false)}
+      />
     
 
     <AuthBottomSheet
