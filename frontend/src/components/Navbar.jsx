@@ -6,6 +6,9 @@ import api from "../services/api";
 import { toast } from "react-toastify";
 import orderSound from "../assets/order.mp3";
 import { useLocation } from "react-router-dom";
+import logo from '../assets/logo.png';
+
+
 
 function Navbar() {
   const navigate = useNavigate();
@@ -119,7 +122,7 @@ function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex justify-between items-center gap-4">
           {/* Brand Logo & Location (Blinkit / Zepto Style) */}
           <div className="flex items-center gap-3">
-            <Link to="/products" className="flex items-center gap-2 group">
+            {/* <Link to="/products" className="flex items-center gap-2 group">
               <div className="h-10 w-10 bg-gradient-to-tr from-[#7A22FD] to-[#D119A5] text-white font-black text-lg rounded-2xl flex items-center justify-center shadow-md shadow-purple-500/20 group-hover:scale-105 transition-transform">
                 ⚡
               </div>
@@ -131,7 +134,52 @@ function Navbar() {
                   Quick Grocery
                 </span>
               </div>
-            </Link>
+            </Link> */}
+
+
+
+            {/* <Link to="/products" className="flex items-center group">
+    <img 
+      src={logo}
+      alt="SujaMart Quick Grocery Logo" 
+      className="h-12 w-auto object-contain group-hover:scale-105 transition-transform" 
+    />
+  </Link> */}
+
+
+  <Link to="/products" className="flex items-center gap-2 group">
+  {/* Left Icon Badge */}
+ {/* Left Icon Badge with Logo Image */}
+{/* Left Icon Badge - Sticker Style */}
+<div className="relative shrink-0 flex items-center justify-center filter drop-shadow-[0_2px_4px_rgba(107,33,168,0.25)] group-hover:scale-105 transition-transform">
+  {/* White Sticker Border Wrapper */}
+  <div className="h-10 w-10 bg-white p-0.5 rounded-2xl ring-2 ring-purple-100 flex items-center justify-center overflow-hidden">
+    <img 
+      src="/logo.png" 
+      alt="SujaMart Sticker Logo" 
+      className="w-full h-full object-cover rounded-xl"
+    />
+  </div>
+
+  {/* Optional Subtle Badge Glow */}
+  <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
+    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+    <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500 text-[7px] text-white font-black items-center justify-center">⚡</span>
+  </span>
+</div>
+
+  {/* Right Typography */}
+  <div className="flex flex-col leading-tight">
+    <span className="text-lg font-black tracking-tight text-[#3B0954] flex items-center gap-0.5">
+      SUJAMART
+    </span>
+    <span className="text-[8px] font-extrabold text-[#7e22ce] uppercase tracking-wider">
+      QUICK GROCERY
+    </span>
+  </div>
+</Link>
+
+
 
             {/* Delivery Location Pill (Desktop) */}
             <button

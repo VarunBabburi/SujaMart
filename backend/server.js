@@ -46,7 +46,9 @@ const io =
      cors: {
   origin: [
     "http://localhost:5173",
-    "https://sujamart.vercel.app"
+    "https://sujamart.vercel.app",
+     "https://sujamart.shop",
+  "https://www.sujamart.shop"
   ],
   methods: ["GET", "POST"],
   credentials: true
@@ -151,7 +153,9 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://sujamart.vercel.app"
+      "https://sujamart.vercel.app",
+       "https://sujamart.shop",
+      "https://www.sujamart.shop"
     ],
     methods: [
       "GET",
