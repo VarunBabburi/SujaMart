@@ -155,7 +155,7 @@ function Navbar() {
   {/* White Sticker Border Wrapper */}
   <div className="h-10 w-10 bg-white p-0.5 rounded-2xl ring-2 ring-purple-100 flex items-center justify-center overflow-hidden">
     <img 
-      src="/logo.png" 
+      src={logo} 
       alt="SujaMart Sticker Logo" 
       className="w-full h-full object-cover rounded-xl"
     />
