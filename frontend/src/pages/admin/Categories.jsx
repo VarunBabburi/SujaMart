@@ -22,14 +22,24 @@ function Categories() {
     fetchCategories();
   }, []);
 
+  // const fetchCategories = async () => {
+  //   try {
+  //     const res = await api.get("/categories");
+  //     setCategories(res.data);
+  //   } catch (error) {
+  //     toast.error("Failed to fetch categories");
+  //   }
+  // };
   const fetchCategories = async () => {
-    try {
-      const res = await api.get("/categories");
-      setCategories(res.data);
-    } catch (error) {
-      toast.error("Failed to fetch categories");
-    }
-  };
+  try {
+    const res = await api.get("/categories");
+    // Sort in descending order by ID so the highest/newest ID appears first
+    const sorted = [...res.data].sort((a, b) => b.id - a.id);
+    setCategories(sorted);
+  } catch (error) {
+    toast.error("Failed to fetch categories");
+  }
+};
 
   const handleImageChange = (e, isEdit = false) => {
     const file = e.target.files[0];
