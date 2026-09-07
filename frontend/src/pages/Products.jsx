@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef} from "react";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
@@ -22,11 +22,30 @@ function Products() {
   const [showLogin, setShowLogin] = useState(false);
   const [networkError, setNetworkError] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
+  const [showTopBtn, setShowTopBtn] = useState(false);
+  const productsSectionRef = useRef(null);
 
   useEffect(() => {
     fetchInitialData();
     checkAndPromptName();
+    const handleScroll = () => {
+    if (window.scrollY > 300) {
+      setShowTopBtn(true);
+    } else {
+      setShowTopBtn(false);
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 
   const fetchInitialData = async () => {
     setLoading(true);
@@ -86,6 +105,31 @@ function Products() {
 
     return () => clearTimeout(timer);
   };
+
+  const handleSearchChange = (e) => {
+  const query = e.target.value;
+  setSearch(query);
+
+  // Smooth scroll to product grid when user types
+  if (query.trim().length > 0 && productsSectionRef.current) {
+    productsSectionRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+};
+
+  const handleCategoryClick = (categoryName) => {
+  setSelectedCategory(categoryName);
+  
+  // Smooth scroll to the products section
+  if (productsSectionRef.current) {
+    productsSectionRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+};
 
   const handleSaveName = async (enteredName) => {
     const token = localStorage.getItem("token");
@@ -273,7 +317,7 @@ function Products() {
                   type="text"
                   placeholder='Search "chips", "cooking oil", "atta"...'
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={handleSearchChange}
                   className="w-full bg-transparent py-3.5 pl-12 pr-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none font-medium"
                 />
                 <div className="absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400">
@@ -350,30 +394,43 @@ function Products() {
           >
             {rowCategories.map((cat) => {
               if (cat.isAll) {
-                const isSelected = selectedCategory === "All";
-                return (
-                  <div
-                    key="all-deals"
-                    onClick={() => setSelectedCategory("All")}
-                    className={`shrink-0 w-24 sm:w-28 snap-start cursor-pointer group flex flex-col items-center text-center p-2.5 rounded-2xl border transition-all duration-200 ${
-                      isSelected
-                        ? "bg-purple-600 border-purple-600 text-white shadow-md scale-105"
-                        : "bg-white border-slate-200/80 hover:border-purple-300 text-slate-800 shadow-sm"
-                    }`}
-                  >
-                    <div
-                      className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center p-2 mb-2 transition-colors ${
-                        isSelected ? "bg-white/20" : "bg-purple-50"
-                      }`}
-                    >
-                      <span className="text-3xl">✨</span>
-                    </div>
-                    <span className="text-xs font-extrabold leading-snug break-words w-full px-0.5">
-                      All Deals
-                    </span>
-                  </div>
-                );
-              }
+  const isSelected = selectedCategory === "All";
+  return (
+    <div
+      key="all-deals"
+      onClick={() => handleCategoryClick("All")}
+      className={`shrink-0 w-24 sm:w-28 snap-start cursor-pointer group flex flex-col items-center text-center p-2 rounded-2xl border transition-all duration-200 ${
+        isSelected
+          ? "bg-purple-50/60 border-purple-600 shadow-md scale-100"
+          : "bg-white border-slate-200/80 hover:border-purple-300 text-slate-800 shadow-sm"
+      }`}
+    >
+      {/* Container with soft tint & 3D Grocery Asset */}
+      <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#F4F0FE] flex items-center justify-center p-2 mb-1.5 overflow-hidden">
+        
+        {/* Authentic Quick-Commerce Offer Tag */}
+        <div className="absolute top-0 left-0 bg-[#FFD700] text-black text-[7.5px] font-black px-1.5 py-0.5 rounded-br-md uppercase tracking-wide shadow-xs z-10">
+          % OFFERS
+        </div>
+
+        {/* 3D Grocery Basket Asset */}
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png"
+          alt="All Deals"
+          className="w-full h-full object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform duration-200"
+        />
+      </div>
+
+      <span
+        className={`text-xs font-black leading-snug break-words w-full px-0.5 ${
+          isSelected ? "text-purple-700" : "text-slate-800"
+        }`}
+      >
+        All Deals
+      </span>
+    </div>
+  );
+}
 
               const isSelected =
                 selectedCategory.toLowerCase() === cat.name?.toLowerCase();
@@ -382,7 +439,7 @@ function Products() {
                 <div
                   key={cat.id}
                   onClick={() =>
-                    setSelectedCategory(isSelected ? "All" : cat.name)
+                    handleCategoryClick(isSelected ? "All" : cat.name)
                   }
                   className={`shrink-0 w-24 sm:w-28 snap-start cursor-pointer group flex flex-col items-center text-center p-2.5 rounded-2xl border transition-all duration-200 ${
                     isSelected
@@ -417,14 +474,11 @@ function Products() {
     );
   })()}
 </div>
-          {/* Products List Viewport */}
-        {/* Products Horizontal Carousel Section */}
+    
 {/* Products Grid Section */}
-{/* Products Grid Section */}
-{/* Products Horizontal Carousel Section */}
-{/* Products Horizontal Carousel Section */}
-{/* Products Grid & Multi-Row Section */}
-<div className="w-full">
+
+
+<div className="w-full scroll-mt-24" ref={productsSectionRef}>
   <div className="mb-5 flex items-center justify-between px-1">
     <h2 className="text-xl font-extrabold tracking-tight text-[#0f172a]">
       {selectedCategory === "All" ? "Buy Fresh Essentials" : `${selectedCategory}`}
@@ -598,6 +652,30 @@ function Products() {
             </div>
           </div>
         )}
+        {/* Floating Back-to-Top Button */}
+{/* Smaller Floating Back-to-Top Button */}
+{showTopBtn && (
+  <button
+    onClick={scrollToTop}
+    aria-label="Scroll to top"
+    className="fixed bottom-20 sm:bottom-6 right-5 z-50 p-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 active:scale-95 flex items-center justify-center border border-purple-400/30"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-4 h-4 sm:w-5 sm:h-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2.5"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M5 10l7-7m0 0l7 7m-7-7v18"
+      />
+    </svg>
+  </button>
+)} 
       </div>
 
       <NamePromptModal

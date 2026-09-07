@@ -115,7 +115,7 @@ function Navbar() {
 
   const isActive = (path) => location.pathname === path;
 
-  return (
+  return ( 
     <header className="sticky top-0 z-50 flex flex-col w-full font-sans">
       {/* Primary Top Navbar */}
       <nav className="bg-[#F4F6FB]/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">

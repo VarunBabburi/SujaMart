@@ -1,7 +1,7 @@
 const db = require("../config/db");
 
 exports.getCategories = (req, res) => {
-  db.query("SELECT * FROM categories ORDER BY id DESC", (err, results) => {
+  db.query("SELECT * FROM categories ORDER BY id ASC", (err, results) => {
     if (err) return res.status(500).json({ message: err.message });
     res.json(results);
   });

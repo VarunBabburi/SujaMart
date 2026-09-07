@@ -3,7 +3,6 @@ import api from "../../services/api";
 import Navbar from "../../components/Navbar";
 import { toast } from "react-toastify";
 
-// Modern SVG fallback icon for missing images
 const DEFAULT_IMAGE = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239CA3AF' class='w-8 h-8'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'/></svg>";
 
 function Categories() {
@@ -12,7 +11,6 @@ function Categories() {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
-  // Edit modal state
   const [editingCategory, setEditingCategory] = useState(null);
   const [editName, setEditName] = useState("");
   const [editImage, setEditImage] = useState(null);
@@ -22,24 +20,15 @@ function Categories() {
     fetchCategories();
   }, []);
 
-  // const fetchCategories = async () => {
-  //   try {
-  //     const res = await api.get("/categories");
-  //     setCategories(res.data);
-  //   } catch (error) {
-  //     toast.error("Failed to fetch categories");
-  //   }
-  // };
   const fetchCategories = async () => {
-  try {
-    const res = await api.get("/categories");
-    // Sort in descending order by ID so the highest/newest ID appears first
-    const sorted = [...res.data].sort((a, b) => b.id - a.id);
-    setCategories(sorted);
-  } catch (error) {
-    toast.error("Failed to fetch categories");
-  }
-};
+    try {
+      const res = await api.get("/categories");
+      const sorted = [...res.data].sort((a, b) => b.id - a.id);
+      setCategories(sorted);
+    } catch (error) {
+      toast.error("Failed to fetch categories");
+    }
+  };
 
   const handleImageChange = (e, isEdit = false) => {
     const file = e.target.files[0];
@@ -54,29 +43,48 @@ function Categories() {
     }
   };
 
+  // 1. INSTANT ADD CATEGORY
   const addCategory = async (e) => {
     e.preventDefault();
     if (!name.trim()) return toast.info("Please enter a category name");
 
+    const tempId = Date.now(); // Temporary unique ID
+    const newCategoryObj = {
+      id: tempId,
+      name: name,
+      image: imagePreview || null,
+    };
+
+    // Update UI Instantly (0ms delay)
+    setCategories((prev) => [newCategoryObj, ...prev]);
+
+    // Reset input fields immediately
+    const tempName = name;
+    setName("");
+    setImage(null);
+    setImagePreview(null);
+
     try {
       const token = localStorage.getItem("token");
       const formData = new FormData();
-      formData.append("name", name);
+      formData.append("name", tempName);
       if (image) formData.append("image", image);
 
-      await api.post("/categories", formData, {
+      const res = await api.post("/categories", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
 
-      setName("");
-      setImage(null);
-      setImagePreview(null);
-      fetchCategories();
-      toast.success("Category added successfully!");
+      // Replace temp item with real item returned from database
+      setCategories((prev) =>
+        prev.map((cat) => (cat.id === tempId ? res.data : cat))
+      );
+      toast.success("Category added!");
     } catch (error) {
+      // Rollback on server failure
+      setCategories((prev) => prev.filter((cat) => cat.id !== tempId));
       toast.error("Failed to add category");
     }
   };
@@ -88,9 +96,23 @@ function Categories() {
     setEditImage(null);
   };
 
+  // 2. INSTANT UPDATE CATEGORY
   const handleUpdateCategory = async (e) => {
     e.preventDefault();
     if (!editName.trim()) return toast.info("Category name required");
+
+    const targetId = editingCategory.id;
+    const previousCategories = [...categories];
+
+    // Update UI Instantly & Close Modal Immediately
+    setCategories((prev) =>
+      prev.map((cat) =>
+        cat.id === targetId
+          ? { ...cat, name: editName, image: editImagePreview }
+          : cat
+      )
+    );
+    setEditingCategory(null);
 
     try {
       const token = localStorage.getItem("token");
@@ -98,33 +120,43 @@ function Categories() {
       formData.append("name", editName);
       if (editImage) formData.append("image", editImage);
 
-      await api.put(`/categories/${editingCategory.id}`, formData, {
+      const res = await api.put(`/categories/${targetId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
 
-      setEditingCategory(null);
-      fetchCategories();
-      toast.success("Category updated successfully!");
+      // Sync updated data from backend response
+      setCategories((prev) =>
+        prev.map((cat) => (cat.id === targetId ? res.data : cat))
+      );
+      toast.success("Category updated!");
     } catch (error) {
+      // Rollback on server error
+      setCategories(previousCategories);
       toast.error("Failed to update category");
     }
   };
 
+  // 3. INSTANT DELETE CATEGORY
   const handleDeleteCategory = async (id, catName) => {
     if (!window.confirm(`Are you sure you want to delete "${catName}"?`)) return;
+
+    const previousCategories = [...categories];
+
+    // Remove from UI Instantly (0ms delay)
+    setCategories((prev) => prev.filter((cat) => cat.id !== id));
 
     try {
       const token = localStorage.getItem("token");
       await api.delete(`/categories/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      fetchCategories();
       toast.success("Category deleted");
     } catch (error) {
+      // Rollback on error
+      setCategories(previousCategories);
       toast.error("Failed to delete category");
     }
   };
@@ -134,7 +166,6 @@ function Categories() {
       <Navbar />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header Title */}
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-2xl font-black text-gray-900 tracking-tight">Category Manager</h1>
@@ -145,14 +176,12 @@ function Categories() {
           </span>
         </div>
 
-        {/* Add Category Section */}
         <div className="bg-white border border-gray-200/80 rounded-2xl p-6 shadow-sm mb-10">
           <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
             Add New Category
           </h2>
 
           <form onSubmit={addCategory} className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-            {/* Category Name Input */}
             <div className="flex-1 w-full">
               <input
                 type="text"
@@ -163,7 +192,6 @@ function Categories() {
               />
             </div>
 
-            {/* Custom Image Upload Button */}
             <div className="flex items-center gap-3 w-full md:w-auto">
               <label className="flex items-center gap-2 cursor-pointer bg-slate-100 hover:bg-slate-200 text-gray-700 text-xs font-bold px-4 py-3 rounded-xl border border-gray-200 transition-all active:scale-95">
                 <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,14 +206,12 @@ function Categories() {
                 />
               </label>
 
-              {/* Image Preview Thumbnail */}
               {imagePreview && (
                 <div className="relative w-11 h-11 bg-gray-100 rounded-xl border border-gray-200 overflow-hidden flex-shrink-0">
                   <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 </div>
               )}
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-6 py-3 rounded-xl shadow-sm hover:shadow active:scale-95 transition-all ml-auto md:ml-0"
@@ -196,14 +222,12 @@ function Categories() {
           </form>
         </div>
 
-        {/* Instamart Grid Display */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
           {categories.map((cat) => (
             <div
               key={cat.id}
               className="group bg-white border border-gray-200/80 hover:border-emerald-500 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-all relative overflow-hidden"
             >
-              {/* Image Container with Soft Background */}
               <div className="w-24 h-24 bg-slate-50 group-hover:bg-emerald-50/50 rounded-2xl flex items-center justify-center p-2 mb-3 border border-slate-100 transition-colors">
                 <img
                   src={cat.image || DEFAULT_IMAGE}
@@ -213,12 +237,10 @@ function Categories() {
                 />
               </div>
 
-              {/* Category Name */}
               <h3 className="text-xs font-extrabold text-gray-800 line-clamp-1 tracking-tight mb-3">
                 {cat.name}
               </h3>
 
-              {/* Edit / Delete Buttons */}
               <div className="flex gap-2 w-full pt-2 border-t border-gray-100 mt-auto">
                 <button
                   onClick={() => openEditModal(cat)}
@@ -238,7 +260,6 @@ function Categories() {
         </div>
       </div>
 
-      {/* Modern Edit Modal Overlay */}
       {editingCategory && (
         <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl border border-gray-100">
