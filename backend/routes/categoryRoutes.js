@@ -3,7 +3,7 @@ const router = express.Router();
 
 const verifyToken = require("../middleware/authMiddleware");
 const isAdmin = require("../middleware/adminMiddleware");
-const upload = require("../middleware/uploadmiddleware");
+const upload = require("../middleware/uploadMiddleware");
 
 const {
   getCategories,
