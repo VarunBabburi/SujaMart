@@ -200,6 +200,16 @@ function Navbar() {
           </div>
 
           {/* Mobile Specific Header Sub-Text */}
+         <div className="flex sm:hidden items-center gap-2">
+            {user?.role === "admin" && (
+              <Link
+                to="/admin-panel"
+                className="bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white px-2.5 py-1.5 rounded-xl text-[10px] font-black tracking-wider uppercase shadow-sm flex items-center gap-1 active:scale-95 transition"
+              >
+                <span>⚙️</span>
+                <span>Admin</span>
+              </Link>
+            )}
           <button
             onClick={() => navigate("/addresses")}
             className="flex sm:hidden flex-col items-end text-right bg-white/60 hover:bg-purple-50/80 px-2.5 py-1 rounded-xl border border-slate-200/60 transition active:scale-95 cursor-pointer"
@@ -212,6 +222,7 @@ function Navbar() {
               📍 Home
             </span>
           </button>
+          </div>
 
           {/* Clean Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-1 bg-white/80 border border-slate-200/80 p-1 rounded-2xl shadow-xs">
@@ -243,12 +254,20 @@ function Navbar() {
               className="flex items-center gap-2 bg-white border border-slate-200/80 hover:bg-slate-50 transition px-3 py-1.5 rounded-xl text-xs font-extrabold text-slate-700 shadow-xs"
             >
               <span>👋 {user?.name || "User"}</span>
-              {user?.role === "admin" && (
-                <span className="bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white px-1.5 py-0.5 rounded-md text-[9px] font-black tracking-widest uppercase shadow-xs">
-                  Admin
-                </span>
-              )}
+             
             </Link>
+
+<div className="flex items-center gap-2 bg-white border border-slate-200/80 hover:bg-slate-50 transition px-3 py-1.5 rounded-xl text-xs font-extrabold text-slate-700 shadow-xs"
+>
+           {user?.role === "admin" && (
+              <Link
+                to="/admin-panel"
+                className="bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white px-2.5 py-1.5 rounded-xl text-[10px] font-black tracking-wider uppercase shadow-sm flex items-center gap-1 active:scale-95 transition"
+              >
+                <span>⚙️</span>
+                <span>Admin</span>
+              </Link>
+            )}</div>
 
             {/* Admin Notification Bell */}
             {user?.role === "admin" && (
@@ -307,6 +326,7 @@ function Navbar() {
               </div>
             )}
 
+
             <button
               onClick={logout}
               className="text-xs font-black uppercase tracking-wider text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100/80 px-3 py-2 rounded-xl transition active:scale-95 border border-rose-100 shadow-xs"
@@ -318,12 +338,15 @@ function Navbar() {
       </nav>
 
       {/* Admin Console Navigation Sub-Bar */}
-      {user?.role === "admin" && (
+      {/* {user?.role === "admin" && (
         <div className="bg-[#0f172a] text-slate-300 border-b border-slate-800 shadow-inner">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center overflow-x-auto gap-1 scrollbar-none">
-            <div className="text-[9px] font-black uppercase tracking-widest text-purple-400 bg-purple-950/60 border border-purple-800/50 px-2 py-1 rounded-md mr-2 shrink-0">
-              Admin Panel
-            </div>
+            <Link
+  to="/admin-panel"
+  className="text-[9px] font-black uppercase tracking-widest text-purple-400 bg-purple-950/60 border border-purple-800/50 px-2 py-1 rounded-md mr-2 shrink-0 transition hover:bg-purple-900/70"
+>
+  Admin Panel
+</Link>
 
             {[
               { path: "/admin", label: "Dashboard" },
@@ -348,7 +371,7 @@ function Navbar() {
             ))}
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Mobile Bottom Quick Navigation Bar (Smooth Hide on Scroll Down, Show on Scroll Up) */}
       <div
@@ -361,7 +384,7 @@ function Navbar() {
             { path: "/products", label: "Shop", icon: "🛒" },
             { path: "/cart", label: "Cart", icon: "🛍️" },
             { path: "/orders", label: "Orders", icon: "📦" },
-            { path: "/ledger", label: "Udhaar", icon: "📖" },
+            { path: "/ledger", label: "Credit", icon: "📖" },
             { path: "/profile", label: "Profile", icon: "👤" },
           ].map((item) => {
             const active = isActive(item.path);

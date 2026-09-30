@@ -25,6 +25,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 //import BottomNav from "./components/BottomNav";
 import PhoneLogin from "./pages/PhoneLogin";
+import AdminPanel from "./pages/admin/AdminPanel";
 
 function App() {
   return (
@@ -134,6 +135,15 @@ function App() {
           path="/profile"
           element={<Profile />}
         />
+
+        <Route
+  path="/admin-panel"
+  element={
+    <AdminRoute>
+      <AdminPanel />
+    </AdminRoute>
+  }
+/>
 
         <Route
           path="/admin/customers"

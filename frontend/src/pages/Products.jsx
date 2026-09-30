@@ -489,8 +489,8 @@ function Products() {
   </div>
 
   {/* Chunk array into rows of 6 items max */}
-  {Array.from({ length: Math.ceil(filteredProducts.length / 6) }).map((_, rowIndex) => {
-    const rowProducts = filteredProducts.slice(rowIndex * 6, rowIndex * 6 + 6);
+  {Array.from({ length: Math.ceil(filteredProducts.length / 3) }).map((_, rowIndex) => {
+    const rowProducts = filteredProducts.slice(rowIndex * 3, rowIndex * 3 + 3);
 
     return (
       <div key={rowIndex} className="mb-6">
