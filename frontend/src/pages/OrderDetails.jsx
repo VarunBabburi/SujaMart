@@ -70,22 +70,17 @@ const currentStep =
                     padding: "20px",
                 }}
             >
-                <h1>
+                <h1><strong>
                     Order #
-                    {order.order_id}
+                    {order.order_id}</strong>
                 </h1>
 
-                <p>
-                    Status:
-                    {order.order_status}
-                </p>
-
-                <div className="mt-8">
+                <div className="mt-2">
   <h2 className="text-xl font-bold mb-6">
     Order Tracking
   </h2>
 
-  <div className="flex items-center justify-between">
+  <div className="flex w-full">
     {statuses.map((status, index) => (
       <div
         key={status}
@@ -94,7 +89,7 @@ const currentStep =
         {/* Line */}
         {index !== statuses.length - 1 && (
           <div
-            className={`absolute top-5 left-1/2 w-full h-1 ${
+            className={`absolute top-5 left-[calc(50%+20px)] w-[calc(100%-40px)] h-1 ${
               index < currentStep
                 ? "bg-green-500"
                 : "bg-gray-300"
@@ -113,10 +108,10 @@ const currentStep =
           {index <= currentStep ? "✓" : ""}
         </div>
 
-        <p className="text-sm mt-3 text-center">
+        <p className="text-xs sm:text-sm mt-3 text-center leading-tight">
           {status}
         </p>
-      </div>
+      </div> 
     ))}
   </div>
 </div>
@@ -212,7 +207,7 @@ rounded-full
 </div>
 
 
-                <p>
+                <p className="mt-4">
   <strong>
     Payment Method:
   </strong>{" "}
@@ -248,8 +243,10 @@ rounded-full
   </div>
 )}
 
-                <p>
-                    Date:
+                <p className="mb-4">
+                    <strong>
+                    Date:  
+                    </strong> 
                     {new Date(
                         order.created_at
                     ).toLocaleString()}
@@ -310,7 +307,7 @@ rounded-full
                 )}
 
                 <h2>
-                    Total:
+                   <strong> Total: </strong>
                     ₹
                     {
                         order.total_amount

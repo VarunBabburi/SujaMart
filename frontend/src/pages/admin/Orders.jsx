@@ -307,7 +307,7 @@ navigate(
 
 className="
 mt-4
-bg-green-600
+bg-gradient-to-r from-purple-600 to-fuchsia-600
 text-white
 px-5
 py-2

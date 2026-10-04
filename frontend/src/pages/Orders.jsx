@@ -249,6 +249,8 @@ function Orders() {
                 <div className="mt-4 flex flex-col sm:flex-row items-center justify-end gap-3 pt-2">
                   <button
                     onClick={() => navigate(`/orders/${order.id}`)}
+                  //className="bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white px-2.5 py-1.5 rounded-xl text-[10px] font-black tracking-wider uppercase shadow-sm flex items-center gap-1 active:scale-95 transition"
+
                     className="w-full sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm rounded-xl transition-all active:scale-98"
                   >
                     View Details
@@ -256,7 +258,9 @@ function Orders() {
 
                   <button
                     onClick={() => downloadInvoice(order.id)}
-                    className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 active:scale-98"
+                    //className="bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white px-2.5 py-1.5 rounded-xl text-[10px] font-black tracking-wider uppercase shadow-sm flex items-center gap-1 active:scale-95 transition"
+
+                    className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 active:scale-98"
                   >
                     <span>📄</span> Download Invoice
                   </button>

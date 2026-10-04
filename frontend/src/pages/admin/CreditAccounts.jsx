@@ -176,7 +176,7 @@ function CreditAccounts() {
                           account.user_id
                         )
                       }
-                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+                      className="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
                     >
                       Record
                     </button>

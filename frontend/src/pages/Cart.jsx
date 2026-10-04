@@ -249,7 +249,7 @@ function Cart() {
 
             {/* ── Delivery ETA strip ── */}
             <div className="bg-white flex items-center gap-3 px-4 py-3 border-b border-gray-100">
-              <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0">
                 <span className="text-white text-lg">⚡</span>
               </div>
               <div>
@@ -303,7 +303,7 @@ function Cart() {
                       >
                         {item.quantity === 1 ? "-" : "−"}
                       </button>
-                      <span className="w-9 h-9 bg-green-600 text-white flex items-center justify-center text-[13px] font-extrabold">
+                      <span className="w-9 h-9 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white flex items-center justify-center text-[13px] font-extrabold">
                         {item.quantity}
                       </span>
                       <button
@@ -465,7 +465,7 @@ function Cart() {
               <div className="space-y-2">
                 {[
                   { value: "cash", label: "Cash on Delivery", icon: "💵", badge: null },
-                  { value: "udhaar", label: "Udhaar (Credit)", icon: "📋", badge: null },
+                  { value: "udhaar", label: "Credit", icon: "📋", badge: null },
                   { value: "online", label: "Online Payment", icon: "📱", badge: "UPI / Card / Net Banking" },
                 ].map((opt) => (
                   <label
@@ -521,7 +521,7 @@ function Cart() {
                   placeOrder();
                 }
               }}
-              className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold px-7 py-3.5 rounded-2xl text-[14px] transition-colors flex items-center gap-2 flex-shrink-0"
+              className="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:bg-green-700 active:bg-green-800 text-white font-bold px-7 py-3.5 rounded-2xl text-[14px] transition-colors flex items-center gap-2 flex-shrink-0"
             >
               {paymentMethod === "online" ? `Pay ₹${totalAmount}` : "Place Order"}
               <span className="text-base">→</span>
