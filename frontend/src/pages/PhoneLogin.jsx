@@ -123,19 +123,15 @@ function PhoneLogin() {
 
   return (
     <div 
-      className="relative min-h-screen w-full flex items-center justify-center px-4 overflow-hidden bg-cover bg-center"
+      className="relative min-h-screen w-full flex items-center justify-center px-4 overflow-hidden bg-cover bg-center bg-no-repeat"
       style={{ 
         backgroundImage: `url(${bgImage})` 
       }}
     >
       {/* Heavy modern blur overlay looking into the app */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/70 via-emerald-950/25 to-slate-900/60 backdrop-blur-[px]"></div>
-    
-      <div className="relative z-10 bg-white/80 backdrop-blur-md shadow-2xl rounded-3xl w-full max-w-md p-8 border border-white/40 transform transition-all">
-        {/* <h1 className="text-3xl font-extrabold text-green-600 text-center">SujaMart</h1>
-        <p className="text-center text-gray-500 mt-1 mb-6 text-sm">
-          Shop fresh grocery with 1-click mobile login
-        </p> */}
+<div className="absolute inset-0 bg-slate-900/20 backdrop-blur-none md:bg-slate-900/30 md:backdrop-blur-xl transition-all"></div>    
+      <div className="relative z-10 bg-white/100 backdrop-blur-md shadow-2xl rounded-3xl w-full max-w-md p-8 border border-white/40 transform transition-all">
+        
 
         <div className="text-center mb-6 ">
           <span className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm animate-bounce">
