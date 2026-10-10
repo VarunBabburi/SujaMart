@@ -152,6 +152,7 @@ exports.getCart = (req, res) => {
     ci.id,
     ci.product_id,
     p.name,
+    p.image_url,
     p.price,
     ci.quantity,
     (p.price * ci.quantity) AS subtotal
