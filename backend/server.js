@@ -28,6 +28,7 @@ const invoiceRoutes = require("./routes/invoiceRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const otpRoutes = require("./routes/otpRoutes");
 const logger = require("./utils/logger");
+ const supportRoutes = require("./routes/supportRoutes");
 
 require("./config/db");
 
@@ -218,7 +219,7 @@ app.use(
   "/api/notifications",
   notificationRoutes
 );
-
+app.use("/api/support", supportRoutes);
 
 app.get("/", (req, res) => {
   res.send("Sujatha Kiranam Backend Running");

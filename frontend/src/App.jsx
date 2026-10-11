@@ -27,6 +27,15 @@ import "react-toastify/dist/ReactToastify.css";
 import PhoneLogin from "./pages/PhoneLogin";
 import AdminPanel from "./pages/admin/AdminPanel";
 
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import CustomerSupport from "./pages/CustomerSupport";
+import FAQs from "./pages/FAQs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
+
+
+
 function App() {
   return (
     <>
@@ -136,6 +145,8 @@ function App() {
           element={<Profile />}
         />
 
+      
+
         <Route
   path="/admin-panel"
   element={
@@ -187,9 +198,7 @@ function App() {
         />
 
         <Route
-
 path="/phone-login"
-
 element={
 <AuthRoute>
               <PhoneLogin />
@@ -197,6 +206,12 @@ element={
 }
 
 />
+ <Route path="/about" element={<AboutUs />} />
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/support" element={<CustomerSupport />} />
+        <Route path="/faqs" element={<FAQs />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsAndConditions />} />
 
       </Routes>
       {/* <BottomNav /> */}
