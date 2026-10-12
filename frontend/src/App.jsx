@@ -26,6 +26,7 @@ import "react-toastify/dist/ReactToastify.css";
 //import BottomNav from "./components/BottomNav";
 import PhoneLogin from "./pages/PhoneLogin";
 import AdminPanel from "./pages/admin/AdminPanel";
+import SupportInbox from "./pages/admin/SupportInbox";
 
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
@@ -33,17 +34,19 @@ import CustomerSupport from "./pages/CustomerSupport";
 import FAQs from "./pages/FAQs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
+import ScrollToTop from "./components/ScrollToTop";
 
 
 
 function App() {
   return (
     <>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={
-            <AuthRoute>
+            //<AuthRoute>
               <Login />
-            </AuthRoute>
+          //  </AuthRoute>
           } />
 
         
@@ -58,9 +61,9 @@ function App() {
         <Route
           path="/products"
           element={
-            <PrivateRoute>
+            
               <Products />
-            </PrivateRoute>
+           
           }
         />
 
@@ -179,6 +182,15 @@ function App() {
           element={
             <AdminRoute>
               <AdminOrderDetails />
+            </AdminRoute>
+          }
+        />
+
+         <Route
+          path="/admin/support"
+          element={
+            <AdminRoute>
+              <SupportInbox />
             </AdminRoute>
           }
         />

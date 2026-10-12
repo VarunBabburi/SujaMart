@@ -202,7 +202,7 @@ function Navbar() {
                   <Icon d={ICONS.bolt} className="h-2.5 w-2.5 text-amber-500" filled />6 mins
                 </span>
                 <span className="text-xs font-bold text-slate-600 truncate max-w-[130px]">
-                  Home - Hanamkonda
+                  Home - Warangal
                 </span>
               </div>
             </button>

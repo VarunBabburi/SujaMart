@@ -2,10 +2,12 @@ import { useEffect, useState, useRef } from "react";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
+import { useLocation, useNavigate } from "react-router-dom";
 import AuthBottomSheet from "../components/AuthBottomSheet";
 import NetworkError from "../components/NetworkError";
 import NamePromptModal from "../components/NamePromptModal";
 import Footer from "../components/Footer";
+
 
 const DEFAULT_IMAGE =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239CA3AF'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'/></svg>";
@@ -44,6 +46,8 @@ const ProductSkeleton = () => (
 );
 
 function Products() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -80,6 +84,14 @@ function Products() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Opened from /phone-login (or any link that asks for login): show the OTP sheet
+  useEffect(() => {
+    if (location.state?.openLogin && !localStorage.getItem("token")) {
+      setShowLogin(true);
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.state]);
 
   // Auto-advance ad slides every 4 seconds (pauses on hover / touch)
   useEffect(() => {
@@ -846,11 +858,14 @@ function Products() {
         onClose={() => setShowNameModal(false)}
       />
 
-      <AuthBottomSheet
+     <AuthBottomSheet
         show={showLogin}
         onClose={() => setShowLogin(false)}
         onSuccess={() => {
           setShowLogin(false);
+          fetchCartSummary();
+          fetchCart();
+          checkAndPromptName();
         }}
       />
     </>

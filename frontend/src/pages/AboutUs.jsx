@@ -43,6 +43,10 @@ const STEPS = [
   { n: 3, title: "Delivered", text: "Track your order live until it arrives at your door." },
 ];
 
+const OWNER = APP_INFO.owner || "Varun Babburi";
+const OWNER_TITLE = APP_INFO.ownerTitle || "Founder & Owner";
+const OWNER_INITIALS = OWNER.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+
 const card =
   "bg-white rounded-3xl border border-purple-100/70 shadow-[0_2px_16px_rgba(76,29,149,0.05)]";
 
@@ -54,6 +58,45 @@ function AboutUs() {
       subtitle={`${APP_INFO.name} is your neighbourhood quick-grocery store, now in your pocket.`}
     >
       <div className="space-y-4">
+
+         {/* Founder */}
+        <section className={`${card} p-5 sm:p-6`}>
+          <h2 className="text-lg font-extrabold tracking-tight mb-4">Meet the founder</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-[#7A22FD] via-[#B318B0] to-[#FF4E6B] text-white text-2xl font-black flex items-center justify-center shadow-lg shadow-purple-500/25 shrink-0">
+              {OWNER_INITIALS}
+            </div>
+            <div className="flex-1">
+              <p className="text-xl font-black tracking-tight">{OWNER}</p>
+              <p className="text-[12px] font-black uppercase tracking-wider text-purple-700 mt-0.5">
+                {OWNER_TITLE}, {APP_INFO.name}
+              </p>
+              <p className="text-sm leading-relaxed text-slate-600 font-medium mt-2.5">
+                {APP_INFO.name} is built and run by {OWNER} in {APP_INFO.address.split(",").slice(-3, -1).join(",").trim() || "Telangana"}.
+                Every order, every product and every support request is handled with one goal: groceries
+                that arrive fast, fresh and fairly priced. If something is not right, you can reach the
+                owner directly.
+              </p>
+              <div className="mt-3.5 flex flex-wrap gap-2">
+                <a
+                  href={`mailto:${APP_INFO.email}`}
+                  className="px-4 py-2 rounded-xl bg-purple-50 border border-purple-100 text-purple-700 text-[12px] font-black active:scale-95 transition"
+                >
+                  Email {OWNER.split(" ")[0]}
+                </a>
+                <a
+                  href={`https://wa.me/${APP_INFO.whatsapp}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-[12px] font-black active:scale-95 transition"
+                >
+                  WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Story */}
         <section className={`${card} p-5 sm:p-6`}>
           <h2 className="text-lg font-extrabold tracking-tight mb-2">Our story</h2>

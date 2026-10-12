@@ -645,6 +645,19 @@ function Cart() {
             </div>
             <button
               onClick={() => {
+                if(totalAmount<100)
+                {
+                  toast.warning("Minimum order amount is ₹100");
+                  return;
+                }
+                if (!paymentMethod){
+                  toast.warning("Please select a payment method");
+                  return;
+                }
+                if (!selectedAddress){
+                  toast.warning("Please select a delivery address");
+                  return;
+                }
                 if (paymentMethod === "online") {
                   handleOnlinePayment();
                 } else {

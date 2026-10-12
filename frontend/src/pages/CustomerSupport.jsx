@@ -1,5 +1,5 @@
 // Put this file at: src/pages/CustomerSupport.jsx
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../services/api";
@@ -22,6 +22,13 @@ const TOPICS = [
   { id: "udhaar", label: "Udhaar (credit)", hint: "Ledger and dues", icon: ICONS.book, tone: "bg-orange-100 text-orange-700" },
 ];
 
+const STATUS_STYLE = {
+  open: { label: "Open", cls: "bg-rose-100 text-rose-700" },
+  in_progress: { label: "In progress", cls: "bg-amber-100 text-amber-700" },
+  resolved: { label: "Resolved", cls: "bg-emerald-100 text-emerald-700" },
+  closed: { label: "Closed", cls: "bg-slate-200 text-slate-600" },
+};
+
 function CustomerSupport() {
   const formRef = useRef(null);
   const [category, setCategory] = useState("");
@@ -29,6 +36,24 @@ function CustomerSupport() {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [ticketRef, setTicketRef] = useState(null);
+  const [myTickets, setMyTickets] = useState([]);
+
+  const loadMyTickets = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const res = await api.get("/support/tickets", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMyTickets(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    loadMyTickets();
+  }, []);
 
   const pickTopic = (id) => {
     setCategory(id);
@@ -55,6 +80,7 @@ function CustomerSupport() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setTicketRef(res.data?.ticketId ?? "submitted");
+      loadMyTickets();
       setCategory("");
       setOrderId("");
       setMessage("");
@@ -208,6 +234,50 @@ function CustomerSupport() {
             </form>
           )}
         </section>
+
+        {/* My requests + replies from our team */}
+        {myTickets.length > 0 && (
+          <section>
+            <h2 className="text-lg font-extrabold tracking-tight mb-3 px-1">My requests</h2>
+            <div className="space-y-3">
+              {myTickets.map((t) => {
+                const st = STATUS_STYLE[t.status] || STATUS_STYLE.open;
+                const topic = TOPICS.find((x) => x.id === t.category);
+                return (
+                  <div key={t.id} className={`${card} p-4`}>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[13px] font-black text-purple-700">#{t.id}</span>
+                      <span className="text-[14px] font-extrabold">{topic?.label || t.category}</span>
+                      <span className={`ml-auto rounded-full px-2.5 py-1 text-[11px] font-black ${st.cls}`}>
+                        {st.label}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-[13px] text-slate-600 font-medium whitespace-pre-wrap">{t.message}</p>
+                    <p className="mt-1 text-[11px] text-slate-400 font-semibold">
+                      {new Date(t.created_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                      {t.order_id ? ` · Order #${t.order_id}` : ""}
+                    </p>
+
+                    {t.admin_reply ? (
+                      <div className="mt-3 rounded-2xl bg-purple-50 border border-purple-100 p-3.5">
+                        <p className="text-[11px] font-black uppercase tracking-wider text-purple-700">
+                          Reply from {APP_INFO.name} team
+                        </p>
+                        <p className="mt-1 text-[13px] font-semibold text-slate-800 whitespace-pre-wrap">
+                          {t.admin_reply}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="mt-3 text-[12px] font-semibold text-slate-400">
+                        Waiting for a reply from our team...
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* FAQ nudge */}
         <Link

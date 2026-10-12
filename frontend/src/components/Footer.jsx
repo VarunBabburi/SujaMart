@@ -80,7 +80,7 @@ function Footer() {
       <div className="border-t border-slate-800">
         <div className="max-w-[1440px] mx-auto px-6 py-4 flex items-center justify-between text-xs text-slate-500 font-medium">
           <p>
-            © {new Date().getFullYear()} {APP_INFO.name}. All rights reserved.
+              © {new Date().getFullYear()} {APP_INFO.name}. Owned &amp; operated by {APP_INFO.owner}. All rights reserved.
           </p>
           <p>Support hours: {APP_INFO.hours}</p>
         </div>

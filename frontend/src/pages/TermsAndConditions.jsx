@@ -8,6 +8,12 @@ import { APP_INFO } from "../constants/appInfo";
 
 const sections = [
   {
+    title: "Who we are",
+    paragraphs: [
+      `${APP_INFO.name} (${APP_INFO.website}) is owned and operated by ${APP_INFO.owner || "Varun Babburi"}, ${APP_INFO.address}. You can reach us at ${APP_INFO.email} or ${APP_INFO.phone}.`,
+    ],
+  },
+  {
     title: "Acceptance of terms",
     paragraphs: [
       `By creating an account, placing an order or otherwise using ${APP_INFO.name}, you agree to these Terms and Conditions and to our Privacy Policy. If you do not agree, please do not use the service.`,

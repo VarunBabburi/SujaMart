@@ -51,6 +51,13 @@ const adminSections = [
     icon: "📒",
     color: "from-violet-500 to-purple-600",
   },
+  {
+    title: "Support Inbox",
+    description: "Reply to customer tickets and messages",
+    path: "/admin/support",
+    icon: "💬",
+    color: "from-teal-500 to-emerald-600",
+  },
 ];
 
 function AdminPanel() {

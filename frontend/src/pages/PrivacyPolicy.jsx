@@ -11,7 +11,7 @@ const sections = [
   {
     title: "Who we are",
     paragraphs: [
-      `${APP_INFO.name} ("we", "us", "our") is a quick-grocery delivery service operating at ${APP_INFO.website} and through our mobile app. This policy explains what personal information we collect, how we use it and the choices you have.`,
+      `${APP_INFO.name} ("we", "us", "our") is a quick-grocery delivery service operating at ${APP_INFO.website} and through our mobile app. ${APP_INFO.name} is owned and operated by ${APP_INFO.owner || "Varun Babburi"}. This policy explains what personal information we collect, how we use it and the choices you have.`,
     ],
   },
   {

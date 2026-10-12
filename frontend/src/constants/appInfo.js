@@ -2,6 +2,8 @@
 // TODO: replace every placeholder below with your real business details.
 
 export const APP_INFO = {
+  owner: "Varun Babburi",
+  ownerTitle: "Founder & Owner",
   name: "SujaMart",
   tagline: "Quick Grocery",
   website: "sujamart.shop",
