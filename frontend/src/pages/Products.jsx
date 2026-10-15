@@ -7,6 +7,7 @@ import AuthBottomSheet from "../components/AuthBottomSheet";
 import NetworkError from "../components/NetworkError";
 import NamePromptModal from "../components/NamePromptModal";
 import Footer from "../components/Footer";
+import ProductDetailSheet from "../components/Productdetailsheet";
 
 
 const DEFAULT_IMAGE =
@@ -62,6 +63,7 @@ function Products() {
   const [networkError, setNetworkError] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
   const [showTopBtn, setShowTopBtn] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const productsSectionRef = useRef(null);
 
   // Ad slider
@@ -687,7 +689,10 @@ function Products() {
                     className="group relative bg-white rounded-3xl border border-slate-100 p-2.5 sm:p-3 flex flex-col shadow-[0_2px_14px_rgba(76,29,149,0.05)] transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/10"
                   >
                     {/* Image */}
-                    <div className="relative aspect-square rounded-2xl bg-gradient-to-b from-[#F8F7FF] to-[#F1EEFB] flex items-center justify-center p-3 overflow-hidden">
+                    <div
+                      onClick={() => setSelectedProductId(product.id)}
+                      className="relative aspect-square rounded-2xl bg-gradient-to-b from-[#F8F7FF] to-[#F1EEFB] flex items-center justify-center p-3 overflow-hidden cursor-pointer"
+                    >
                       <img
                         src={product.image_url}
                         alt={product.name}
@@ -725,7 +730,7 @@ function Products() {
                       </span>
 
                       {/* Add / stepper floating on the image */}
-                      <div className="absolute bottom-2 right-2 z-10">
+                      <div className="absolute bottom-2 right-2 z-10" onClick={(e) => e.stopPropagation()}>
                         {cartItem ? (
                           <div className="flex items-center bg-purple-600 text-white rounded-xl h-8 sm:h-9 overflow-hidden font-black shadow-lg shadow-purple-600/30">
                             <button
@@ -761,7 +766,10 @@ function Products() {
                     </div>
 
                     {/* Details */}
-                    <div className="pt-2.5 px-0.5 flex flex-col flex-1">
+                    <div
+                      onClick={() => setSelectedProductId(product.id)}
+                      className="pt-2.5 px-0.5 flex flex-col flex-1 cursor-pointer"
+                    >
                       <div className="flex items-baseline gap-1.5">
                         <span className="text-base sm:text-lg font-black text-slate-900">
                           ₹{product.price}
@@ -851,6 +859,35 @@ function Products() {
           </button>
         )}
       </div>
+
+      {selectedProductId && (() => {
+        const selected = products.find((p) => p.id === selectedProductId);
+        if (!selected) return null;
+        const selectedCartItem = getCartItem(selected.id);
+        return (
+          <ProductDetailSheet
+            product={selected}
+            products={products}
+            cartItem={selectedCartItem}
+            getCartItem={getCartItem}
+            onClose={() => setSelectedProductId(null)}
+            onSelect={(id) => setSelectedProductId(id)}
+            onAdd={() => addToCart(selected.id)}
+            onIncrease={() =>
+              selectedCartItem &&
+              updateQuantity(selectedCartItem.id, selectedCartItem.quantity + 1)
+            }
+            onDecrease={() => {
+              if (!selectedCartItem) return;
+              if (selectedCartItem.quantity > 1) {
+                updateQuantity(selectedCartItem.id, selectedCartItem.quantity - 1);
+              } else {
+                removeFromCart(selectedCartItem.id);
+              }
+            }}
+          />
+        );
+      })()}
 
       <NamePromptModal
         show={showNameModal}
