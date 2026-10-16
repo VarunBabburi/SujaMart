@@ -26,7 +26,7 @@ const ICONS = {
   tag: "M3 12V4h8l10 10-8 8L3 12zM7.5 8.5h.01",
   box: "M21 8l-9-5-9 5v8l9 5 9-5V8zM3 8l9 5 9-5M12 13v8",
 };
-
+let pendingBack = null;
 /**
  * Product details bottom sheet (mobile) / centred modal (desktop).
  * All cart logic stays in the parent page; this component only calls the
@@ -61,6 +61,35 @@ function ProductDetailSheet({
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [product?.id]);
+  
+  const onCloseRef = useRef(onClose);
+onCloseRef.current = onClose;
+
+useEffect(() => {
+  if (pendingBack) {
+    clearTimeout(pendingBack);
+    pendingBack = null;
+  } else {
+    window.history.pushState({ ...window.history.state, productSheet: true }, "");
+  }
+
+  let closedByBackButton = false;
+  const onPop = () => {
+    closedByBackButton = true;
+    onCloseRef.current();
+  };
+  window.addEventListener("popstate", onPop);
+
+  return () => {
+    window.removeEventListener("popstate", onPop);
+    if (!closedByBackButton) {
+      pendingBack = setTimeout(() => {
+        pendingBack = null;
+        if (window.history.state?.productSheet) window.history.back();
+      }, 0);
+    }
+  };
+}, []);
 
   if (!product) return null;
 
